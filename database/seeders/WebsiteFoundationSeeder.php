@@ -147,10 +147,9 @@ class WebsiteFoundationSeeder extends Seeder
                 'display_order' => 2,
                 'is_active' => true,
                 'links' => [
-                    ['label_en' => 'Bhaluka, Mymensingh, Bangladesh', 'label_bn' => 'ভালুকা, ময়মনসিংহ, বাংলাদেশ', 'url' => '/en#appointment-cta', 'display_order' => 0],
+                    ['label_en' => 'Katiadi, Kishoreganj', 'label_bn' => 'কটিয়াদী, কিশোরগঞ্জ', 'url' => '/en#appointment-cta', 'display_order' => 0],
                     ['label_en' => '+880 1777-XXX XXX', 'label_bn' => '+৮৮০ ১৭৭৭-XXX XXX', 'url' => 'tel:+8801777XXXXXX', 'display_order' => 1],
                     ['label_en' => 'care.diagnostic.center@gmail.com', 'label_bn' => 'care.diagnostic.center@gmail.com', 'url' => 'mailto:care.diagnostic.center@gmail.com', 'display_order' => 2],
-                    ['label_en' => 'Mon - Sat: 8:00 AM - 10:00 PM', 'label_bn' => 'সোম - শনি: সকাল ৮:০০ - রাত ১০:০০', 'url' => '/en#appointment-cta', 'display_order' => 3],
                 ],
             ],
             'newsletter' => [
