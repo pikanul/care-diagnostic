@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f5f7fb">
+    <meta name="theme-color" content="#004aa5">
     <title>{{ $siteSettings?->{'hospital_name_'.$currentLocale} ?? config('app.name') }}</title>
     @if ($siteSettings?->favicon_path)
         <link rel="icon" href="{{ asset('storage/'.$siteSettings->favicon_path) }}">
@@ -17,13 +17,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #ffffff;
+            --bg: #f4f9ff;
             --panel: #ffffff;
-            --text: #162033;
-            --muted: #667085;
-            --line: #dbe2ee;
-            --accent: #0f766e;
-            --accent-dark: #0b5d56;
+            --text: #082352;
+            --muted: #5c769b;
+            --line: #cfe3f7;
+            --accent: #0b66c3;
+            --accent-dark: #003f95;
+            --accent-cyan: #0bb7c7;
             --danger: #b42318;
         }
 
@@ -92,7 +93,7 @@
         }
 
         .topbar {
-            background: #062a61;
+            background: #003f95;
             color: #ffffff;
             font-size: 17px;
             font-weight: 700;
@@ -155,7 +156,7 @@
             display: inline-grid;
             place-items: center;
             border-radius: 999px;
-            background: #083878;
+            background: #075db8;
             color: #fff;
             font-size: 17px;
             font-weight: 800;
@@ -192,8 +193,9 @@
             z-index: 30;
             background: #ffffff;
             backdrop-filter: none;
-            border-top: 4px solid #062a61;
-            border-bottom: 1px solid var(--line);
+            border-top: 4px solid #004aa5;
+            border-bottom: 1px solid #cfe3f7;
+            box-shadow: 0 12px 26px rgba(0, 74, 165, .08);
         }
 
         .header-inner {
@@ -225,7 +227,7 @@
             object-fit: contain;
             border-radius: 999px;
             background: #fff;
-            border: 2px solid #1a66e8;
+            border: 2px solid #0b66c3;
             padding: 4px;
         }
 
@@ -366,10 +368,10 @@
 
         .action-btn.primary,
         .action-link.primary {
-            background: #0a8f3e;
+            background: linear-gradient(135deg, #004aa5, #0bb7c7);
             color: #fff;
-            border-color: #0a8f3e;
-            box-shadow: 0 7px 16px rgba(10,143,62,.22);
+            border-color: #0b66c3;
+            box-shadow: 0 7px 16px rgba(0,74,165,.22);
         }
 
         .header-actions .action-link.primary {
@@ -401,8 +403,8 @@
 
         .footer {
             margin-top: 48px;
-            background: #10233d;
-            color: #dfe7f7;
+            background: linear-gradient(135deg, #003678 0%, #004aa5 48%, #0571bd 100%);
+            color: #eaf5ff;
         }
 
         .footer-inner {
@@ -427,7 +429,7 @@
         }
 
         .footer-desc {
-            color: #c8d5ee;
+            color: #d6eafe;
             line-height: 1.7;
             overflow-wrap: anywhere;
         }
@@ -449,7 +451,7 @@
         }
 
         .footer-links a {
-            color: #dfe7f7;
+            color: #eaf5ff;
             text-decoration: none;
             overflow-wrap: anywhere;
         }
