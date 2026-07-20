@@ -65,8 +65,8 @@ class HomepageBuilder
                         'secondary_cta_label_en' => 'Our Services',
                         'secondary_cta_label_bn' => 'আমাদের সেবা দেখুন',
                         'secondary_cta_url' => '/en#main-services',
-                        'desktop_image_path' => 'homepage/reference/hero-family.png',
-                        'mobile_image_path' => 'homepage/reference/hero-family.png',
+                        'desktop_image_path' => 'homepage/reference/hero-family-v2.png',
+                        'mobile_image_path' => 'homepage/reference/hero-family-v2.png',
                     ],
                     [
                         'media_type' => 'video',

@@ -160,6 +160,27 @@
                                             $videoPoster = $mobileImage ?: $desktopImage;
                                         @endphp
                                         <article class="hero-slide {{ $loop->first ? 'is-active' : '' }}" data-slide data-slide-index="{{ $slideIndex }}" aria-hidden="{{ $loop->first ? 'false' : 'true' }}" style="--hero-overlay: {{ $overlay / 100 }}; --hero-text-align: {{ $alignment }};">
+                                            @if ($desktopImage)
+                                                <div class="hero-bg" aria-hidden="true">
+                                                    <picture>
+                                                        @if ($mobileImage)
+                                                            <source media="(max-width: 768px)" srcset="{{ $isLazy ? '' : asset('storage/'.$mobileImage) }}" @if ($isLazy) data-srcset="{{ asset('storage/'.$mobileImage) }}" @endif>
+                                                        @endif
+                                                        <img
+                                                            alt=""
+                                                            @if ($isLazy)
+                                                                src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+                                                                data-src="{{ asset('storage/'.$desktopImage) }}"
+                                                            @else
+                                                                src="{{ asset('storage/'.$desktopImage) }}"
+                                                            @endif
+                                                            loading="{{ $isLazy ? 'lazy' : 'eager' }}"
+                                                            decoding="async"
+                                                        >
+                                                    </picture>
+                                                </div>
+                                            @endif
+
                                             <div class="hero-copy">
                                                 <span class="hero-badge">{{ $isBn ? 'বিশ্বস্ত স্বাস্থ্যসেবা প্রতিটি পরিবারের জন্য' : 'Trusted Healthcare For Every Family' }}</span>
                                                 <h3 class="section-title">
@@ -223,8 +244,9 @@
                                                 </div>
                                             </div>
 
-                                            <div class="hero-media">
-                                                @if (($slide['media_type'] ?? 'image') === 'video')
+                                            @if (($slide['media_type'] ?? 'image') === 'video' || ! $desktopImage)
+                                                <div class="hero-media">
+                                                    @if (($slide['media_type'] ?? 'image') === 'video')
                                                     @php
                                                         $videoSource = $videoPath ? asset('storage/'.$videoPath) : $videoUrl;
                                                     @endphp
@@ -239,27 +261,11 @@
                                                     @else
                                                         <div class="hero-placeholder" aria-label="Hero video placeholder"></div>
                                                     @endif
-                                                @elseif ($desktopImage)
-                                                    <picture style="display:block;width:100%;">
-                                                        @if ($mobileImage)
-                                                            <source media="(max-width: 768px)" srcset="{{ $isLazy ? '' : asset('storage/'.$mobileImage) }}" @if ($isLazy) data-srcset="{{ asset('storage/'.$mobileImage) }}" @endif>
-                                                        @endif
-                                                        <img
-                                                            alt="{{ $slideTitle }}"
-                                                            @if ($isLazy)
-                                                                src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
-                                                                data-src="{{ asset('storage/'.$desktopImage) }}"
-                                                            @else
-                                                                src="{{ asset('storage/'.$desktopImage) }}"
-                                                            @endif
-                                                            loading="{{ $isLazy ? 'lazy' : 'eager' }}"
-                                                            decoding="async"
-                                                        >
-                                                    </picture>
-                                                @else
-                                                    <div class="hero-placeholder" aria-label="Hero image placeholder"></div>
-                                                @endif
-                                            </div>
+                                                    @else
+                                                        <div class="hero-placeholder" aria-label="Hero image placeholder"></div>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </article>
                                     @endforeach
                                 </div>
