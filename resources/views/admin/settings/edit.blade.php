@@ -1,6 +1,86 @@
 @extends('layouts.admin', ['title' => 'Global Settings'])
 
 @section('content')
+    @php
+        $socialRows = old('social_links_dynamic');
+
+        if (! is_array($socialRows)) {
+            $socialRows = collect($setting->social_links ?? [])
+                ->map(fn ($url, $platform) => ['platform' => $platform, 'url' => $url])
+                ->values()
+                ->all();
+        }
+
+        if ($socialRows === []) {
+            $socialRows = [
+                ['platform' => 'facebook', 'url' => ''],
+                ['platform' => 'instagram', 'url' => ''],
+                ['platform' => 'youtube', 'url' => ''],
+                ['platform' => 'whatsapp', 'url' => $setting->whatsapp_link ?? ''],
+            ];
+        }
+    @endphp
+
+    <style>
+        .asset-actions,
+        .settings-section-heading,
+        .social-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .settings-section-heading {
+            justify-content: space-between;
+            margin: 4px 0 10px;
+        }
+
+        .settings-section-heading h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .social-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .social-row {
+            align-items: end;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .social-row label {
+            flex: 1 1 180px;
+        }
+
+        .button.secondary {
+            background: #e7eef8;
+            color: #12325f;
+        }
+
+        .check {
+            align-items: center;
+            display: flex;
+            gap: 8px;
+        }
+
+        .check input {
+            width: auto;
+        }
+
+        @media (max-width: 680px) {
+            .asset-actions,
+            .settings-section-heading,
+            .social-row {
+                align-items: stretch;
+                flex-direction: column;
+            }
+        }
+    </style>
+
     <form class="form-grid" method="POST" action="{{ route('admin.global-settings.update') }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -21,21 +101,30 @@
                 <input type="file" name="logo_path" accept="image/*">
             </label>
             @if ($setting->logo_path)
-                <p class="muted">Current logo: <a href="{{ asset('storage/'.$setting->logo_path) }}" target="_blank">view</a></p>
+                <div class="asset-actions">
+                    <p class="muted">Current logo: <a href="{{ asset('storage/'.$setting->logo_path) }}" target="_blank">view</a></p>
+                    <label class="check"><input type="checkbox" name="remove_logo_path" value="1"> Remove current logo</label>
+                </div>
             @endif
 
             <label>Mobile Logo
                 <input type="file" name="logo_mobile_path" accept="image/*">
             </label>
             @if ($setting->logo_mobile_path)
-                <p class="muted">Current mobile logo: <a href="{{ asset('storage/'.$setting->logo_mobile_path) }}" target="_blank">view</a></p>
+                <div class="asset-actions">
+                    <p class="muted">Current mobile logo: <a href="{{ asset('storage/'.$setting->logo_mobile_path) }}" target="_blank">view</a></p>
+                    <label class="check"><input type="checkbox" name="remove_logo_mobile_path" value="1"> Remove current mobile logo</label>
+                </div>
             @endif
 
             <label>Favicon
                 <input type="file" name="favicon_path" accept="image/*,.ico">
             </label>
             @if ($setting->favicon_path)
-                <p class="muted">Current favicon: <a href="{{ asset('storage/'.$setting->favicon_path) }}" target="_blank">view</a></p>
+                <div class="asset-actions">
+                    <p class="muted">Current favicon: <a href="{{ asset('storage/'.$setting->favicon_path) }}" target="_blank">view</a></p>
+                    <label class="check"><input type="checkbox" name="remove_favicon_path" value="1"> Remove current favicon</label>
+                </div>
             @endif
         </div>
 
@@ -120,23 +209,61 @@
             <label>Google Map Embed
                 <textarea name="google_map_embed" rows="3">{{ old('google_map_embed', $setting->google_map_embed) }}</textarea>
             </label>
-            <label>Facebook
-                <input type="url" name="social_links[facebook]" value="{{ old('social_links.facebook', data_get($setting->social_links, 'facebook')) }}">
-            </label>
-            <label>YouTube
-                <input type="url" name="social_links[youtube]" value="{{ old('social_links.youtube', data_get($setting->social_links, 'youtube')) }}">
-            </label>
-            <label>Instagram
-                <input type="url" name="social_links[instagram]" value="{{ old('social_links.instagram', data_get($setting->social_links, 'instagram')) }}">
-            </label>
-            <label>LinkedIn
-                <input type="url" name="social_links[linkedin]" value="{{ old('social_links.linkedin', data_get($setting->social_links, 'linkedin')) }}">
-            </label>
-            <label>X / Twitter
-                <input type="url" name="social_links[x]" value="{{ old('social_links.x', data_get($setting->social_links, 'x')) }}">
-            </label>
+            <div>
+                <div class="settings-section-heading">
+                    <h3>Social Links</h3>
+                    <button class="button secondary" type="button" data-add-social-link>Add Social Link</button>
+                </div>
+
+                <div class="social-list" data-social-link-list>
+                    @foreach ($socialRows as $index => $row)
+                        <div class="social-row" data-social-link-row>
+                            <label>Platform Key
+                                <input type="text" name="social_links_dynamic[{{ $index }}][platform]" value="{{ data_get($row, 'platform') }}" placeholder="facebook">
+                            </label>
+                            <label>URL
+                                <input type="url" name="social_links_dynamic[{{ $index }}][url]" value="{{ data_get($row, 'url') }}" placeholder="https://example.com">
+                            </label>
+                            <label class="check"><input type="checkbox" name="social_links_dynamic[{{ $index }}][remove]" value="1" @checked(data_get($row, 'remove'))> Delete</label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
 
         <button type="submit">Save Settings</button>
     </form>
+
+    <template data-social-link-template>
+        <div class="social-row" data-social-link-row>
+            <label>Platform Key
+                <input type="text" data-name="social_links_dynamic[__INDEX__][platform]" placeholder="facebook">
+            </label>
+            <label>URL
+                <input type="url" data-name="social_links_dynamic[__INDEX__][url]" placeholder="https://example.com">
+            </label>
+            <label class="check"><input type="checkbox" data-name="social_links_dynamic[__INDEX__][remove]" value="1"> Delete</label>
+        </div>
+    </template>
+
+    <script>
+        document.querySelector('[data-add-social-link]')?.addEventListener('click', () => {
+            const list = document.querySelector('[data-social-link-list]');
+            const template = document.querySelector('[data-social-link-template]');
+
+            if (!list || !template) {
+                return;
+            }
+
+            const index = list.querySelectorAll('[data-social-link-row]').length;
+            const fragment = template.content.cloneNode(true);
+
+            fragment.querySelectorAll('[data-name]').forEach((input) => {
+                input.name = input.dataset.name.replace('__INDEX__', index);
+                input.removeAttribute('data-name');
+            });
+
+            list.appendChild(fragment);
+        });
+    </script>
 @endsection

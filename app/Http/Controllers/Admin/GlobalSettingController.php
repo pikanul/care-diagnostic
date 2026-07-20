@@ -30,6 +30,9 @@ class GlobalSettingController extends Controller
             'logo_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg', 'max:4096'],
             'logo_mobile_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg', 'max:4096'],
             'favicon_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg,ico', 'max:2048'],
+            'remove_logo_path' => ['nullable', 'boolean'],
+            'remove_logo_mobile_path' => ['nullable', 'boolean'],
+            'remove_favicon_path' => ['nullable', 'boolean'],
             'address_en' => ['nullable', 'string'],
             'address_bn' => ['nullable', 'string'],
             'phone_primary' => ['nullable', 'string', 'max:50'],
@@ -44,6 +47,10 @@ class GlobalSettingController extends Controller
             'social_links.instagram' => ['nullable', 'url'],
             'social_links.linkedin' => ['nullable', 'url'],
             'social_links.x' => ['nullable', 'url'],
+            'social_links_dynamic' => ['nullable', 'array'],
+            'social_links_dynamic.*.platform' => ['nullable', 'string', 'max:50', 'regex:/^[a-z0-9_-]+$/i'],
+            'social_links_dynamic.*.url' => ['nullable', 'url', 'max:255'],
+            'social_links_dynamic.*.remove' => ['nullable', 'boolean'],
             'whatsapp_link' => ['nullable', 'url'],
             'google_map_embed' => ['nullable', 'string'],
             'default_language' => ['required', Rule::in(['en', 'bn'])],
@@ -76,11 +83,12 @@ class GlobalSettingController extends Controller
 
         foreach (['logo_path', 'logo_mobile_path', 'favicon_path'] as $field) {
             if ($request->hasFile($field)) {
-                if ($setting->{$field}) {
-                    Storage::disk('public')->delete($setting->{$field});
-                }
+                $this->deleteUploadedAsset($setting->{$field});
 
                 $validated[$field] = $request->file($field)->store('site-settings', 'public');
+            } elseif ($request->boolean('remove_'.$field)) {
+                $this->deleteUploadedAsset($setting->{$field});
+                $validated[$field] = null;
             } else {
                 unset($validated[$field]);
             }
@@ -89,7 +97,14 @@ class GlobalSettingController extends Controller
         $validated['contact_buttons_visible'] = $request->boolean('contact_buttons_visible');
         $validated['header_top_bar_visible'] = $request->boolean('header_top_bar_visible');
         $validated['newsletter_visible'] = $request->boolean('newsletter_visible');
-        $validated['social_links'] = $validated['social_links'] ?? null;
+        $validated['social_links'] = $this->normalizeSocialLinks($request->input('social_links_dynamic', $validated['social_links'] ?? []));
+
+        unset(
+            $validated['remove_logo_path'],
+            $validated['remove_logo_mobile_path'],
+            $validated['remove_favicon_path'],
+            $validated['social_links_dynamic'],
+        );
 
         $setting->update($validated);
 
@@ -102,5 +117,43 @@ class GlobalSettingController extends Controller
         );
 
         return back()->with('status', 'Global settings updated successfully.');
+    }
+
+    private function deleteUploadedAsset(?string $path): void
+    {
+        if ($path && str_starts_with($path, 'site-settings/')) {
+            Storage::disk('public')->delete($path);
+        }
+    }
+
+    /**
+     * @param  array<int|string, array<string, mixed>|string|null>  $rows
+     * @return array<string, string>|null
+     */
+    private function normalizeSocialLinks(array $rows): ?array
+    {
+        $links = [];
+
+        foreach ($rows as $platform => $row) {
+            if (is_array($row)) {
+                if (! empty($row['remove'])) {
+                    continue;
+                }
+
+                $platform = (string) ($row['platform'] ?? '');
+                $url = (string) ($row['url'] ?? '');
+            } else {
+                $url = (string) $row;
+            }
+
+            $platform = strtolower(trim((string) $platform));
+            $url = trim($url);
+
+            if ($platform !== '' && $url !== '') {
+                $links[$platform] = $url;
+            }
+        }
+
+        return $links ?: null;
     }
 }
