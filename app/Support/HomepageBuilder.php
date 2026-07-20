@@ -110,10 +110,10 @@ class HomepageBuilder
                 'title_en' => 'Quick Care Access',
                 'title_bn' => 'দ্রুত সেবা নিন',
                 'actions' => [
-                    ['title_en' => '24/7 Emergency Care', 'title_bn' => '২৪/৭ জরুরি সেবা', 'url' => '/en#appointment-cta'],
-                    ['title_en' => 'Home Sample Collection', 'title_bn' => 'হোম স্যাম্পল কালেকশন', 'url' => '/en#home-sample-collection'],
-                    ['title_en' => 'Quick Appointments', 'title_bn' => 'দ্রুত অ্যাপয়েন্টমেন্ট', 'url' => '/en#appointment-cta'],
-                    ['title_en' => 'Trusted by Thousands', 'title_bn' => 'হাজারো মানুষের আস্থা', 'url' => '/en#why-choose-us'],
+                    ['title_en' => '24/7', 'title_bn' => '২৪/৭', 'subtitle_en' => 'Emergency Care', 'subtitle_bn' => 'জরুরি সেবা', 'url' => 'tel:+8801777XXXXXX'],
+                    ['title_en' => 'Home Sample', 'title_bn' => 'হোম স্যাম্পল', 'subtitle_en' => 'Collection', 'subtitle_bn' => 'কালেকশন', 'url' => '/en#home-sample-collection'],
+                    ['title_en' => 'Quick', 'title_bn' => 'দ্রুত', 'subtitle_en' => 'Appointments', 'subtitle_bn' => 'অ্যাপয়েন্টমেন্ট', 'url' => '/en#appointment-cta'],
+                    ['title_en' => 'Trusted by', 'title_bn' => 'বিশ্বাস', 'subtitle_en' => 'Thousands', 'subtitle_bn' => 'হাজারো মানুষের', 'url' => '/en#why-choose-us'],
                 ],
             ];
         }
