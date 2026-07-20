@@ -1,0 +1,5 @@
+*
+!.gitignore
+!/homepage/
+!/homepage/reference/
+!/homepage/reference/*
