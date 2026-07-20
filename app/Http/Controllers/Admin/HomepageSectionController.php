@@ -265,7 +265,6 @@ class HomepageSectionController extends Controller
             'hero_slides' => ['required', 'array', 'min:1'],
             'hero_slides.*.display_order' => ['nullable', 'integer', 'min:0'],
             'hero_slides.*.is_active' => ['nullable', 'boolean'],
-            'hero_slides.*.media_type' => ['required', 'string', Rule::in(['image', 'video'])],
             'hero_slides.*.title_en' => ['required', 'string', 'max:255'],
             'hero_slides.*.title_bn' => ['required', 'string', 'max:255'],
             'hero_slides.*.subtitle_en' => ['nullable', 'string', 'max:255'],
@@ -282,11 +281,8 @@ class HomepageSectionController extends Controller
             'hero_slides.*.text_alignment' => ['nullable', 'string', Rule::in(['left', 'center', 'right'])],
             'hero_slides.*.desktop_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
             'hero_slides.*.mobile_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
-            'hero_slides.*.video_file' => ['nullable', 'file', 'mimes:mp4,mov,webm', 'max:20480'],
-            'hero_slides.*.video_url' => ['nullable', 'url', 'max:255'],
             'hero_slides.*.desktop_image_path' => ['nullable', 'string', 'max:255'],
             'hero_slides.*.mobile_image_path' => ['nullable', 'string', 'max:255'],
-            'hero_slides.*.video_path' => ['nullable', 'string', 'max:255'],
         ]);
     }
 
@@ -311,12 +307,11 @@ class HomepageSectionController extends Controller
 
             $desktopImage = $this->storeUploadedFile($request, "hero_slides.$index.desktop_image_file", 'homepage', $existingSlide['desktop_image_path'] ?? ($slide['desktop_image_path'] ?? null));
             $mobileImage = $this->storeUploadedFile($request, "hero_slides.$index.mobile_image_file", 'homepage', $existingSlide['mobile_image_path'] ?? ($slide['mobile_image_path'] ?? null));
-            $videoFile = $this->storeUploadedFile($request, "hero_slides.$index.video_file", 'homepage', $existingSlide['video_path'] ?? ($slide['video_path'] ?? null));
 
             $slides[] = array_filter([
                 'display_order' => isset($slide['display_order']) ? (int) $slide['display_order'] : ($index + 1),
                 'is_active' => array_key_exists('is_active', $slide) ? (bool) $slide['is_active'] : true,
-                'media_type' => $slide['media_type'] ?? 'image',
+                'media_type' => 'image',
                 'title_en' => $slide['title_en'] ?? null,
                 'title_bn' => $slide['title_bn'] ?? null,
                 'subtitle_en' => $slide['subtitle_en'] ?? null,
@@ -333,8 +328,6 @@ class HomepageSectionController extends Controller
                 'text_alignment' => $slide['text_alignment'] ?? null,
                 'desktop_image_path' => $desktopImage,
                 'mobile_image_path' => $mobileImage,
-                'video_url' => $slide['video_url'] ?? null,
-                'video_path' => $videoFile,
             ], static fn ($value) => ! blank($value) || $value === 0 || $value === false);
         }
 
@@ -617,9 +610,10 @@ class HomepageSectionController extends Controller
                 'text_alignment' => null,
                 'desktop_image_path' => null,
                 'mobile_image_path' => null,
-                'video_url' => null,
-                'video_path' => null,
             ], is_array($slide) ? $slide : []);
+
+            $normalizedSlides[$index]['media_type'] = 'image';
+            unset($normalizedSlides[$index]['video_url'], $normalizedSlides[$index]['video_path']);
         }
 
         return [

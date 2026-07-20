@@ -460,7 +460,7 @@
 
                 <div class="subpanel">
                     <h3>Slides</h3>
-                    <p class="muted-hint">Each slide can be an image or a video. Schedule publish and expiry dates to control visibility.</p>
+                    <p class="muted-hint">Upload desktop and mobile hero images. Schedule publish and expiry dates to control visibility.</p>
 
                     <div class="slide-builder" data-slide-builder>
                         @foreach ($heroSlides as $index => $slide)
@@ -475,12 +475,6 @@
                                 <div class="slide-grid">
                                     <label>Display Order
                                         <input type="number" name="hero_slides[{{ $index }}][display_order]" value="{{ old("hero_slides.$index.display_order", $slide['display_order'] ?? $loop->iteration) }}" min="0">
-                                    </label>
-                                    <label>Media Type
-                                        <select name="hero_slides[{{ $index }}][media_type]">
-                                            <option value="image" @selected(old("hero_slides.$index.media_type", $slide['media_type'] ?? 'image') === 'image')>Image</option>
-                                            <option value="video" @selected(old("hero_slides.$index.media_type", $slide['media_type'] ?? 'image') === 'video')>Video</option>
-                                        </select>
                                     </label>
                                     <label>Publish Date
                                         <input type="datetime-local" name="hero_slides[{{ $index }}][publish_at]" value="{{ old("hero_slides.$index.publish_at", isset($slide['publish_at']) && $slide['publish_at'] ? \Illuminate\Support\Carbon::parse($slide['publish_at'])->format('Y-m-d\TH:i') : '') }}">
@@ -543,16 +537,6 @@
                                             <div class="slide-preview"><img src="{{ asset('storage/'.$slide['mobile_image_path']) }}" alt="Mobile slide image"></div>
                                         @endif
                                     </label>
-                                    <label class="full">Video URL
-                                        <input type="url" name="hero_slides[{{ $index }}][video_url]" value="{{ old("hero_slides.$index.video_url", $slide['video_url'] ?? '') }}" placeholder="https://...">
-                                    </label>
-                                    <label class="full">Video File
-                                        <input type="file" name="hero_slides[{{ $index }}][video_file]" accept="video/mp4,video/webm,video/quicktime">
-                                        <input type="hidden" name="hero_slides[{{ $index }}][video_path]" value="{{ $slide['video_path'] ?? '' }}">
-                                        @if (! empty($slide['video_path']))
-                                            <div class="slide-preview"><video controls src="{{ asset('storage/'.$slide['video_path']) }}"></video></div>
-                                        @endif
-                                    </label>
                                 </div>
                                 <div class="slide-actions">
                                     <span class="muted-hint">Sample slide data can stay until real content is entered.</span>
@@ -570,12 +554,6 @@
                             <div class="slide-grid">
                                 <label>Display Order
                                     <input type="number" name="hero_slides[__INDEX__][display_order]" value="__ORDER__" min="0">
-                                </label>
-                                <label>Media Type
-                                    <select name="hero_slides[__INDEX__][media_type]">
-                                        <option value="image">Image</option>
-                                        <option value="video">Video</option>
-                                    </select>
                                 </label>
                                 <label>Publish Date
                                     <input type="datetime-local" name="hero_slides[__INDEX__][publish_at]">
@@ -631,13 +609,6 @@
                                 <label>Mobile Image
                                     <input type="file" name="hero_slides[__INDEX__][mobile_image_file]" accept="image/*">
                                     <input type="hidden" name="hero_slides[__INDEX__][mobile_image_path]">
-                                </label>
-                                <label class="full">Video URL
-                                    <input type="url" name="hero_slides[__INDEX__][video_url]" placeholder="https://...">
-                                </label>
-                                <label class="full">Video File
-                                    <input type="file" name="hero_slides[__INDEX__][video_file]" accept="video/mp4,video/webm,video/quicktime">
-                                    <input type="hidden" name="hero_slides[__INDEX__][video_path]">
                                 </label>
                             </div>
                         </article>
