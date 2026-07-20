@@ -57,6 +57,12 @@
                         <a class="topbar-social" href="{{ $url }}" target="_blank" rel="noopener" aria-label="{{ ucfirst($platform) }}">{{ $socialIcons[$platform] ?? mb_substr($platform, 0, 1) }}</a>
                     @endif
                 @endforeach
+
+                <span class="language-switcher" aria-label="{{ $isBangla ? 'ভাষা পরিবর্তন' : 'Change language' }}">
+                    <a href="{{ $localizedUrl('bn') }}" data-locale-switch class="{{ $isBangla ? 'is-active' : '' }}">বাংলা</a>
+                    <span aria-hidden="true">|</span>
+                    <a href="{{ $localizedUrl('en') }}" data-locale-switch class="{{ ! $isBangla ? 'is-active' : '' }}">English</a>
+                </span>
             </div>
         </div>
     </div>

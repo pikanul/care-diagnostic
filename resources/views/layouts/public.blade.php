@@ -162,6 +162,30 @@
             line-height: 1;
         }
 
+        .language-switcher {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: rgba(255,255,255,.82);
+            font-size: 15px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .language-switcher a {
+            color: rgba(255,255,255,.82);
+            text-decoration: none;
+        }
+
+        .language-switcher a:hover,
+        .language-switcher a.is-active {
+            color: #ffffff;
+        }
+
+        .language-switcher a.is-active {
+            font-weight: 900;
+        }
+
         .header {
             position: sticky;
             top: 0;
@@ -698,6 +722,17 @@
                 toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             });
         }
+
+        document.querySelectorAll('[data-locale-switch]').forEach((link) => {
+            link.addEventListener('click', (event) => {
+                if (!window.location.hash) {
+                    return;
+                }
+
+                event.preventDefault();
+                window.location.href = link.href + window.location.hash;
+            });
+        });
     </script>
 </body>
 </html>
