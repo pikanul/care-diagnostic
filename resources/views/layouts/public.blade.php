@@ -181,7 +181,8 @@
             white-space: nowrap;
         }
 
-        .topbar-meta:first-child span:last-child {
+        .topbar-meta:first-child span:last-child,
+        .topbar-meta:first-child .topbar-map-link {
             min-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -214,7 +215,8 @@
             content: "▣";
         }
 
-        .topbar-meta:first-child span:last-child::before {
+        .topbar-meta:first-child span:last-child::before,
+        .topbar-meta:first-child .topbar-map-link::before {
             content: "●";
             border: 0;
             font-size: 16px;

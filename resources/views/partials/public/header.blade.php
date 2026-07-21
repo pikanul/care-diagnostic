@@ -6,6 +6,16 @@
     $brandTagline = $isBangla ? 'আপনার সুস্থতা আমাদের অঙ্গীকার' : 'Trusted healthcare for every family';
     $openingHours = $siteSettings?->{'opening_hours_'.$locale} ?? null;
     $address = $siteSettings?->{'address_'.$locale} ?? null;
+    $mapSource = trim((string) ($siteSettings?->google_map_embed ?? ''));
+    $mapUrl = $address ? 'https://www.google.com/maps/search/?api=1&query='.rawurlencode($address) : null;
+
+    if ($mapSource !== '') {
+        if (preg_match('~src=["\']([^"\']+)["\']~i', $mapSource, $mapMatch)) {
+            $mapUrl = $mapMatch[1];
+        } elseif (preg_match('~^https?://~i', $mapSource)) {
+            $mapUrl = $mapSource;
+        }
+    }
     $localizedUrl = function (string $targetLocale): string {
         $path = request()->path();
         $localizedPath = preg_replace('~^(en|bn)(/|#|$)~', $targetLocale.'$2', $path);
@@ -39,7 +49,7 @@
                     <a href="tel:{{ $siteSettings->emergency_number }}">{{ $isBangla ? '২৪/৭ জরুরি হেল্পলাইন' : '24/7 Emergency Support' }}</a>
                 @endif
                 @if ($address)
-                    <span>{{ $address }}</span>
+                    <a class="topbar-map-link" href="{{ $mapUrl }}" target="_blank" rel="noopener">{{ $address }}</a>
                 @endif
             </div>
 
