@@ -661,7 +661,9 @@
                             @endif
                             <div class="building-tags">
                                 @foreach (array_slice($facilityData['items'] ?? [], 0, 4) as $facilityItem)
-                                    <span>{{ $isBn ? ($facilityItem['title_bn'] ?? $facilityItem['title_en'] ?? '') : ($facilityItem['title_en'] ?? $facilityItem['title_bn'] ?? '') }}</span>
+                                    <a href="{{ $localizedUrl($facilityItem['url'] ?? '/en#facility-showcase') }}">
+                                        {{ $isBn ? ($facilityItem['title_bn'] ?? $facilityItem['title_en'] ?? '') : ($facilityItem['title_en'] ?? $facilityItem['title_bn'] ?? '') }}
+                                    </a>
                                 @endforeach
                             </div>
                         </div>
