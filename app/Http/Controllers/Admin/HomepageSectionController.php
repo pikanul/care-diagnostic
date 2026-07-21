@@ -328,12 +328,17 @@ class HomepageSectionController extends Controller
             'hero_slides.*.expires_at' => ['nullable', 'date'],
             'hero_slides.*.overlay_opacity' => ['nullable', 'integer', 'min:0', 'max:100'],
             'hero_slides.*.text_alignment' => ['nullable', 'string', Rule::in(['left', 'center', 'right'])],
+            'hero_slides.*.media_type' => ['nullable', 'string', Rule::in(['image', 'video'])],
             'hero_slides.*.desktop_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
             'hero_slides.*.mobile_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
+            'hero_slides.*.video_file' => ['nullable', 'file', 'mimes:mp4,webm,mov', 'max:'.self::IMAGE_MAX_KB],
             'hero_slides.*.desktop_image_path' => ['nullable', 'string', 'max:255'],
             'hero_slides.*.mobile_image_path' => ['nullable', 'string', 'max:255'],
+            'hero_slides.*.video_path' => ['nullable', 'string', 'max:255'],
+            'hero_slides.*.video_url' => ['nullable', 'string', 'max:255'],
             'hero_slides.*.remove_desktop_image' => ['nullable', 'boolean'],
             'hero_slides.*.remove_mobile_image' => ['nullable', 'boolean'],
+            'hero_slides.*.remove_video' => ['nullable', 'boolean'],
         ]);
     }
 
@@ -358,6 +363,7 @@ class HomepageSectionController extends Controller
 
             $desktopImage = $existingSlide['desktop_image_path'] ?? ($slide['desktop_image_path'] ?? null);
             $mobileImage = $existingSlide['mobile_image_path'] ?? ($slide['mobile_image_path'] ?? null);
+            $videoPath = $existingSlide['video_path'] ?? ($slide['video_path'] ?? null);
 
             if ($request->boolean("hero_slides.$index.remove_desktop_image")) {
                 $this->deleteStoredFile($desktopImage);
@@ -369,13 +375,20 @@ class HomepageSectionController extends Controller
                 $mobileImage = null;
             }
 
+            if ($request->boolean("hero_slides.$index.remove_video")) {
+                $this->deleteStoredFile($videoPath);
+                $videoPath = null;
+            }
+
             $desktopImage = $this->storeUploadedFile($request, "hero_slides.$index.desktop_image_file", 'homepage', $desktopImage);
             $mobileImage = $this->storeUploadedFile($request, "hero_slides.$index.mobile_image_file", 'homepage', $mobileImage);
+            $videoPath = $this->storeUploadedFile($request, "hero_slides.$index.video_file", 'homepage', $videoPath);
+            $mediaType = ($slide['media_type'] ?? null) === 'video' || $videoPath || ! blank($slide['video_url'] ?? null) ? 'video' : 'image';
 
             $slides[] = array_filter([
                 'display_order' => isset($slide['display_order']) ? (int) $slide['display_order'] : ($index + 1),
                 'is_active' => array_key_exists('is_active', $slide) ? (bool) $slide['is_active'] : true,
-                'media_type' => 'image',
+                'media_type' => $mediaType,
                 'title_en' => $slide['title_en'] ?? null,
                 'title_bn' => $slide['title_bn'] ?? null,
                 'subtitle_en' => $slide['subtitle_en'] ?? null,
@@ -392,6 +405,8 @@ class HomepageSectionController extends Controller
                 'text_alignment' => $slide['text_alignment'] ?? null,
                 'desktop_image_path' => $desktopImage,
                 'mobile_image_path' => $mobileImage,
+                'video_path' => $videoPath,
+                'video_url' => $slide['video_url'] ?? null,
             ], static fn ($value) => ! blank($value) || $value === 0 || $value === false);
         }
 
@@ -674,10 +689,13 @@ class HomepageSectionController extends Controller
                 'text_alignment' => null,
                 'desktop_image_path' => null,
                 'mobile_image_path' => null,
+                'video_path' => null,
+                'video_url' => null,
             ], is_array($slide) ? $slide : []);
 
-            $normalizedSlides[$index]['media_type'] = 'image';
-            unset($normalizedSlides[$index]['video_url'], $normalizedSlides[$index]['video_path']);
+            $normalizedSlides[$index]['media_type'] = in_array($normalizedSlides[$index]['media_type'] ?? 'image', ['image', 'video'], true)
+                ? $normalizedSlides[$index]['media_type']
+                : 'image';
         }
 
         return [

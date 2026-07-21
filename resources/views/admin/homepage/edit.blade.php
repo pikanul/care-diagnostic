@@ -647,6 +647,12 @@
                                     <label>Overlay Opacity (%)
                                         <input type="number" name="hero_slides[{{ $index }}][overlay_opacity]" value="{{ old("hero_slides.$index.overlay_opacity", $slide['overlay_opacity'] ?? ($heroData['overlay_opacity'] ?? 60)) }}" min="0" max="100">
                                     </label>
+                                    <label>Media Type
+                                        <select name="hero_slides[{{ $index }}][media_type]">
+                                            <option value="image" @selected(old("hero_slides.$index.media_type", $slide['media_type'] ?? 'image') === 'image')>Image</option>
+                                            <option value="video" @selected(old("hero_slides.$index.media_type", $slide['media_type'] ?? 'image') === 'video')>Video</option>
+                                        </select>
+                                    </label>
                                     <label class="full">Title (English)
                                         <input type="text" name="hero_slides[{{ $index }}][title_en]" value="{{ old("hero_slides.$index.title_en", $slide['title_en'] ?? '') }}">
                                     </label>
@@ -693,6 +699,17 @@
                                             <label class="check"><input type="checkbox" name="hero_slides[{{ $index }}][remove_mobile_image]" value="1"> Delete current mobile image</label>
                                         @endif
                                     </label>
+                                    <label>Video File
+                                        <input type="file" name="hero_slides[{{ $index }}][video_file]" accept="video/mp4,video/webm,video/quicktime">
+                                        <input type="hidden" name="hero_slides[{{ $index }}][video_path]" value="{{ $slide['video_path'] ?? '' }}">
+                                        @if (! empty($slide['video_path']))
+                                            <span class="muted-hint">Current video: <a href="{{ asset('storage/'.$slide['video_path']) }}" target="_blank" rel="noopener">view</a></span>
+                                            <label class="check"><input type="checkbox" name="hero_slides[{{ $index }}][remove_video]" value="1"> Delete current video</label>
+                                        @endif
+                                    </label>
+                                    <label>Video URL
+                                        <input type="text" name="hero_slides[{{ $index }}][video_url]" value="{{ old("hero_slides.$index.video_url", $slide['video_url'] ?? '') }}" placeholder="https://.../video.mp4">
+                                    </label>
                                 </div>
                                 <div class="slide-actions">
                                     <span class="muted-hint">Sample slide data can stay until real content is entered.</span>
@@ -727,6 +744,12 @@
                                 </label>
                                 <label>Overlay Opacity (%)
                                     <input type="number" name="hero_slides[__INDEX__][overlay_opacity]" value="{{ $heroData['overlay_opacity'] ?? 60 }}" min="0" max="100">
+                                </label>
+                                <label>Media Type
+                                    <select name="hero_slides[__INDEX__][media_type]">
+                                        <option value="image">Image</option>
+                                        <option value="video">Video</option>
+                                    </select>
                                 </label>
                                 <label class="full">Title (English)
                                     <input type="text" name="hero_slides[__INDEX__][title_en]">
@@ -765,6 +788,13 @@
                                 <label>Mobile Image
                                     <input type="file" name="hero_slides[__INDEX__][mobile_image_file]" accept="image/*">
                                     <input type="hidden" name="hero_slides[__INDEX__][mobile_image_path]">
+                                </label>
+                                <label>Video File
+                                    <input type="file" name="hero_slides[__INDEX__][video_file]" accept="video/mp4,video/webm,video/quicktime">
+                                    <input type="hidden" name="hero_slides[__INDEX__][video_path]">
+                                </label>
+                                <label>Video URL
+                                    <input type="text" name="hero_slides[__INDEX__][video_url]" placeholder="https://.../video.mp4">
                                 </label>
                             </div>
                         </article>

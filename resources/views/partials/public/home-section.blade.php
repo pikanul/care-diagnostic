@@ -151,35 +151,12 @@
                                             $videoPath = $slide['video_path'] ?? null;
                                             $videoUrl = $slide['video_url'] ?? null;
                                             $videoPoster = $mobileImage ?: $desktopImage;
+                                            $isVideo = ($slide['media_type'] ?? 'image') === 'video';
+                                            $videoSource = $isVideo ? ($videoPath ? asset('storage/'.$videoPath) : $videoUrl) : null;
                                         @endphp
                                         <article class="hero-slide {{ $loop->first ? 'is-active' : '' }}" data-slide data-slide-index="{{ $slideIndex }}" aria-hidden="{{ $loop->first ? 'false' : 'true' }}" style="--hero-overlay: {{ $overlay / 100 }}; --hero-text-align: {{ $alignment }};">
-                                            @if ($desktopImage)
+                                            @if ($videoSource || $desktopImage)
                                                 <div class="hero-bg" aria-hidden="true">
-                                                    <picture>
-                                                        @if ($mobileImage)
-                                                            <source media="(max-width: 768px)" srcset="{{ $isLazy ? '' : asset('storage/'.$mobileImage) }}" @if ($isLazy) data-srcset="{{ asset('storage/'.$mobileImage) }}" @endif>
-                                                        @endif
-                                                        <img
-                                                            alt=""
-                                                            @if ($isLazy)
-                                                                src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
-                                                                data-src="{{ asset('storage/'.$desktopImage) }}"
-                                                            @else
-                                                                src="{{ asset('storage/'.$desktopImage) }}"
-                                                            @endif
-                                                            loading="{{ $isLazy ? 'lazy' : 'eager' }}"
-                                                            decoding="async"
-                                                        >
-                                                    </picture>
-                                                </div>
-                                            @endif
-
-                                            @if (($slide['media_type'] ?? 'image') === 'video' || ! $desktopImage)
-                                                <div class="hero-media">
-                                                    @if (($slide['media_type'] ?? 'image') === 'video')
-                                                    @php
-                                                        $videoSource = $videoPath ? asset('storage/'.$videoPath) : $videoUrl;
-                                                    @endphp
                                                     @if ($videoSource)
                                                         <video
                                                             controls
@@ -188,12 +165,30 @@
                                                             poster="{{ $videoPoster ? asset('storage/'.$videoPoster) : '' }}"
                                                             @if ($isLazy) data-src="{{ $videoSource }}" @else src="{{ $videoSource }}" @endif
                                                         ></video>
-                                                    @else
-                                                        <div class="hero-placeholder" aria-label="Hero video placeholder"></div>
+                                                    @elseif ($desktopImage)
+                                                        <picture>
+                                                            @if ($mobileImage)
+                                                                <source media="(max-width: 768px)" srcset="{{ $isLazy ? '' : asset('storage/'.$mobileImage) }}" @if ($isLazy) data-srcset="{{ asset('storage/'.$mobileImage) }}" @endif>
+                                                            @endif
+                                                            <img
+                                                                alt=""
+                                                                @if ($isLazy)
+                                                                    src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+                                                                    data-src="{{ asset('storage/'.$desktopImage) }}"
+                                                                @else
+                                                                    src="{{ asset('storage/'.$desktopImage) }}"
+                                                                @endif
+                                                                loading="{{ $isLazy ? 'lazy' : 'eager' }}"
+                                                                decoding="async"
+                                                            >
+                                                        </picture>
                                                     @endif
-                                                    @else
-                                                        <div class="hero-placeholder" aria-label="Hero image placeholder"></div>
-                                                    @endif
+                                                </div>
+                                            @endif
+
+                                            @if (! $videoSource && ! $desktopImage)
+                                                <div class="hero-media">
+                                                    <div class="hero-placeholder" aria-label="Hero media placeholder"></div>
                                                 </div>
                                             @endif
                                         </article>

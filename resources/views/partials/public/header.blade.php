@@ -43,13 +43,31 @@
         <div class="container topbar-inner">
             <div class="topbar-meta">
                 @if ($openingHours)
-                    <span>{{ $openingHours }}</span>
+                    <span class="topbar-item">
+                        <svg class="topbar-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 7.5v5l3.5 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>{{ $openingHours }}</span>
+                    </span>
                 @endif
                 @if ($siteSettings?->emergency_number)
-                    <a href="tel:{{ $siteSettings->emergency_number }}">{{ $isBangla ? '২৪/৭ জরুরি হেল্পলাইন' : '24/7 Emergency Support' }}</a>
+                    <a class="topbar-item" href="tel:{{ $siteSettings->emergency_number }}">
+                        <svg class="topbar-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M7.5 10.5a4.5 4.5 0 1 1 9 0v3.2a4.5 4.5 0 0 1-9 0v-3.2Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M5.2 13.2H7.5M16.5 13.2h2.3M9.2 18.2l-1.5 2.3M14.8 18.2l1.5 2.3M9.2 6.2 7.7 3.8M14.8 6.2l1.5-2.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <span>{{ $isBangla ? '২৪/৭ জরুরি হেল্পলাইন' : '24/7 Emergency Support' }}</span>
+                    </a>
                 @endif
                 @if ($address)
-                    <a class="topbar-map-link" href="{{ $mapUrl }}" target="_blank" rel="noopener">{{ $address }}</a>
+                    <a class="topbar-item topbar-map-link" href="{{ $mapUrl }}" target="_blank" rel="noopener">
+                        <svg class="topbar-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 21s6.5-5.4 6.5-11a6.5 6.5 0 0 0-13 0c0 5.6 6.5 11 6.5 11Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <circle cx="12" cy="10" r="2.2" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>{{ $address }}</span>
+                    </a>
                 @endif
             </div>
 
