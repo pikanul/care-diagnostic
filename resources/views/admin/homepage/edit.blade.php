@@ -29,15 +29,144 @@
 
 @section('content')
     <style>
-        .builder-grid { display: grid; gap: 18px; grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr); }
-        .builder-panel { display: grid; gap: 14px; }
-        .subpanel { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #fdfefe; }
-        .subpanel h3 { margin: 0 0 10px; font-size: 16px; }
+        .builder-grid {
+            display: grid;
+            width: 100%;
+            gap: 20px;
+            grid-template-columns: minmax(620px, 1.35fr) minmax(420px, .85fr);
+            align-items: start;
+        }
+
+        .builder-grid > .panel {
+            min-width: 0;
+        }
+
+        .builder-panel {
+            display: grid;
+            gap: 16px;
+        }
+
+        .builder-panel > h2 {
+            margin: 0;
+            font-size: 24px;
+            line-height: 1.2;
+        }
+
+        .builder-panel > .muted {
+            margin-top: -8px;
+        }
+
+        .builder-preview {
+            position: sticky;
+            top: 24px;
+            max-height: calc(100vh - 48px);
+            overflow: auto;
+        }
+
+        .builder-preview .section-block {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .builder-preview .section-inner {
+            padding: 0;
+        }
+
+        .builder-preview .hero-slider {
+            position: relative;
+            height: 420px;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #eaf4ff;
+        }
+
+        .builder-preview .hero-stage,
+        .builder-preview .hero-slide {
+            position: relative;
+            height: 100%;
+        }
+
+        .builder-preview .hero-slide:not(.is-active) {
+            display: none;
+        }
+
+        .builder-preview .hero-bg {
+            position: absolute;
+            inset: 0;
+        }
+
+        .builder-preview .hero-bg picture,
+        .builder-preview .hero-bg img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .builder-preview .hero-bg img {
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .builder-preview .hero-copy {
+            position: relative;
+            z-index: 1;
+            width: min(92%, 520px);
+            padding: 34px;
+            color: #07194a;
+        }
+
+        .builder-preview .hero-badge {
+            display: inline-flex;
+            width: fit-content;
+            margin-bottom: 12px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.86);
+            color: #0b66c3;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .builder-preview .section-title {
+            margin: 0;
+            font-size: clamp(26px, 3vw, 38px);
+            line-height: 1.1;
+        }
+
+        .builder-preview .section-subtitle {
+            margin: 10px 0 0;
+            color: #365477;
+            line-height: 1.5;
+        }
+
+        .builder-preview .hero-actions,
+        .builder-preview .hero-trust-row,
+        .builder-preview .quick-panel,
+        .builder-preview .hero-indicators,
+        .builder-preview .slide-nav {
+            display: none;
+        }
+
+        .subpanel {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 18px;
+            background: #fbfdff;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+        }
+
+        .subpanel h3 {
+            margin: 0 0 12px;
+            font-size: 17px;
+            color: var(--text);
+        }
         .hero-settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
         .hero-settings-grid label, .slide-grid label { display: grid; gap: 6px; }
         .hero-settings-grid input[type="checkbox"], .slide-grid input[type="checkbox"] { width: 16px; height: 16px; }
         .slide-builder { display: grid; gap: 12px; }
-        .slide-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #fff; display: grid; gap: 12px; }
+        .slide-card { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: #fff; display: grid; gap: 14px; box-shadow: 0 8px 22px rgba(16,35,61,.04); }
         .slide-card header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
         .slide-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .slide-grid .full { grid-column: 1 / -1; }
@@ -67,8 +196,9 @@
         .physio-card-grid .full { grid-column: 1 / -1; }
         .physio-add { width: fit-content; }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 1300px) {
             .builder-grid { grid-template-columns: 1fr; }
+            .builder-preview { position: static; max-height: none; }
         }
 
         @media (max-width: 720px) {
@@ -76,7 +206,7 @@
         }
     </style>
 
-    <div class="grid">
+    <div class="builder-grid">
         @if ($section->section_key === 'physiotherapy-services')
             <form class="panel builder-panel" method="POST" action="{{ route('admin.homepage.update', $section) }}" data-physio-form>
                 @csrf
@@ -225,7 +355,7 @@
                 <button type="submit">Save Physiotherapy Section</button>
             </form>
 
-            <div class="panel">
+            <div class="panel builder-preview">
                 <h2 style="margin-top:0;">Preview</h2>
                 @include('partials.public.home-section', [
                     'section' => $section,
@@ -405,7 +535,7 @@
                 <button type="submit">Save Doctors Section</button>
             </form>
 
-            <div class="panel">
+            <div class="panel builder-preview">
                 <h2 style="margin-top:0;">Preview</h2>
                 @include('partials.public.home-section', [
                     'section' => $section,
@@ -620,7 +750,7 @@
                 <button type="submit">Save Hero Image</button>
             </form>
 
-            <div class="panel">
+            <div class="panel builder-preview">
                 <h2 style="margin-top:0;">Preview</h2>
                 @include('partials.public.home-section', [
                     'section' => $section,
@@ -628,7 +758,7 @@
                 ])
             </div>
         @else
-            <form class="panel form-grid" method="POST" action="{{ route('admin.homepage.update', $section) }}" enctype="multipart/form-data">
+            <form class="panel form-grid form-wide" method="POST" action="{{ route('admin.homepage.update', $section) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -718,7 +848,7 @@
                 <button type="submit">Save Section</button>
             </form>
 
-            <div class="panel">
+            <div class="panel builder-preview">
                 <h2 style="margin-top:0;">Preview</h2>
                 @include('partials.public.home-section', [
                     'section' => $section,
