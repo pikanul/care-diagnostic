@@ -615,22 +615,25 @@
         .footer-inner {
             padding: 36px 0 18px;
             display: grid;
-            grid-template-columns: 1.4fr 2fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 28px;
+            align-items: start;
         }
 
         .footer-brand {
             display: grid;
+            place-items: center;
             gap: 12px;
         }
 
         .footer-brand img {
-            width: 72px;
-            height: 72px;
+            width: clamp(140px, 12vw, 210px);
+            height: clamp(140px, 12vw, 210px);
             object-fit: contain;
-            border-radius: 8px;
+            border-radius: 18px;
             background: #fff;
-            padding: 4px;
+            padding: 12px;
+            box-shadow: 0 18px 42px rgba(2,33,73,.22);
         }
 
         .footer-desc {
@@ -654,7 +657,7 @@
 
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 18px;
         }
 
@@ -716,30 +719,27 @@
             border-top: 1px solid rgba(255,255,255,0.18);
             background: rgba(2, 33, 73, .24);
             padding: 14px 0 18px;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             gap: 16px;
-            flex-wrap: wrap;
+            align-items: center;
             color: #e7f4ff;
         }
 
-        .footer-social {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .footer-social a {
+        .developer-credit {
+            grid-column: 2;
+            justify-self: center;
             color: #06366f;
             background: #eef8ff;
-            border: 1px solid rgba(255,255,255,.68);
+            border: 1px solid rgba(255,255,255,.72);
             border-radius: 999px;
-            padding: 6px 11px;
-            font-weight: 800;
+            padding: 7px 16px;
+            font-weight: 900;
             text-decoration: none;
+            box-shadow: 0 10px 24px rgba(2,33,73,.12);
         }
 
-        .footer-social a:hover {
+        .developer-credit:hover {
             color: #ffffff;
             background: #078b4f;
         }
@@ -891,6 +891,15 @@
             .footer-inner,
             .footer-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .developer-credit {
+                grid-column: 1;
             }
 
             .content {
