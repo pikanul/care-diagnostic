@@ -526,7 +526,7 @@
                         data-show-dots="{{ $doctorShowDots ? '1' : '0' }}"
                         data-loop="{{ $doctorLoop ? '1' : '0' }}"
                         data-speed="{{ $sliderSpeed }}"
-                        style="--doctor-desktop-cards: {{ $doctorDesktopCards }}; --doctor-mobile-cards: {{ $doctorMobileCards }};">
+                        style="--doctor-desktop-cards: {{ count($doctors) > 5 ? min($doctorDesktopCards, 5) : $doctorDesktopCards }}; --doctor-mobile-cards: {{ $doctorMobileCards }};">
                         @if ($doctorShowArrows && count($doctors) > 1)
                             <button type="button" class="doctor-nav doctor-prev" data-doctor-prev aria-label="Previous doctors">Prev</button>
                             <button type="button" class="doctor-nav doctor-next" data-doctor-next aria-label="Next doctors">Next</button>
@@ -542,6 +542,7 @@
                                         $profileUrl = $doctor['profile_url'] ?? '';
                                         $appointmentUrl = $doctor['appointment_url'] ?? '';
                                         $callUrl = $doctor['call_url'] ?? '';
+                                        $callDisplay = preg_replace('/^tel:/', '', $callUrl);
                                         $degrees = $doctor['degrees'] ?? '';
                                         $specialty = $doctor['specialty'] ?? '';
                                         $department = $doctor['department'] ?? '';
@@ -580,11 +581,11 @@
                                                 @if ($profileUrl)
                                                     <a class="action-link" href="{{ $localizedUrl($profileUrl) }}">{{ $isBn ? 'প্রোফাইল দেখুন' : 'View profile' }}</a>
                                                 @endif
-                                                @if ($appointmentUrl)
-                                                    <a class="action-link primary" href="{{ $localizedUrl($appointmentUrl) }}">{{ $isBn ? 'অ্যাপয়েন্টমেন্ট নিন' : 'Book appointment' }}</a>
-                                                @endif
                                                 @if (! empty($doctor['call_enabled']) && $callUrl)
-                                                    <a class="action-link" href="{{ $callUrl }}">{{ $isBn ? 'কল করুন' : 'Call' }}</a>
+                                                    <a class="action-link doctor-book-call" href="{{ $callUrl }}" data-doctor-call-button data-call-number="{{ $callDisplay }}">
+                                                        {{ $isBn ? 'কল করে অ্যাপয়েন্টমেন্ট' : 'Call to book appointment' }}
+                                                    </a>
+                                                    <span class="doctor-call-number" data-doctor-call-number>{{ $callDisplay }}</span>
                                                 @endif
                                             </div>
                                         </div>

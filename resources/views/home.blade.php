@@ -98,13 +98,15 @@
         .slide-nav { position:absolute; right: 18px; bottom: 18px; display:flex; gap:8px; z-index: 2; }
         .slide-nav button { border:0; border-radius:8px; background:rgba(255,255,255,.92); padding:10px 12px; cursor:pointer; }
         .doctor-carousel { position: relative; display: grid; gap: 14px; overflow: hidden; }
-        .doctor-viewport { overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; padding-bottom: 4px; }
+        .doctor-viewport { overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; overscroll-behavior-x: contain; scrollbar-width: none; padding-bottom: 4px; cursor: grab; touch-action: pan-y; }
+        .doctor-viewport.is-dragging { cursor: grabbing; scroll-snap-type: none; }
         .doctor-viewport::-webkit-scrollbar { display: none; }
         .doctor-track { display: flex; gap: 16px; min-width: 100%; }
-        .doctor-card-item { flex: 0 0 calc((100% - (16px * (var(--doctor-desktop-cards) - 1))) / var(--doctor-desktop-cards)); max-width: 100%; scroll-snap-align: start; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; display: grid; min-width: 0; text-align:center; box-shadow: 0 8px 22px rgba(16,35,61,.04); }
-        .doctor-photo { position: relative; background: #fff; padding: 16px 16px 0; display:grid; place-items:center; }
-        .doctor-photo img { display: block; width: 88px; height: 88px; object-fit: cover; border-radius:999px; background:#eef4f8; }
-        .doctor-placeholder { width: 88px; height: 88px; border-radius:999px; display: grid; place-items: center; background: radial-gradient(circle at 50% 30%, #fff 0 18%, #dfe9f6 19% 38%, #eef8f4 39% 100%); font-weight: 700; color: transparent; }
+        .doctor-card-item { flex: 0 0 calc((100% - (16px * (var(--doctor-desktop-cards) - 1))) / var(--doctor-desktop-cards)); max-width: 100%; scroll-snap-align: start; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; display: grid; min-width: 0; text-align:center; box-shadow: 0 8px 22px rgba(16,35,61,.04); user-select:none; }
+        .doctor-photo { position: relative; background: #fff; padding: 14px 14px 0; display:grid; place-items:center; }
+        .doctor-photo picture { display:block; width:110px; max-width:100%; }
+        .doctor-photo img { display: block; width: 110px; height: 110px; object-fit: cover; border-radius:12px; background:#eef4f8; border:1px solid #dbe7f5; }
+        .doctor-placeholder { width: 110px; height: 110px; border-radius:12px; display: grid; place-items: center; background: radial-gradient(circle at 50% 30%, #fff 0 18%, #dfe9f6 19% 38%, #eef8f4 39% 100%); font-weight: 700; color: transparent; }
         .test-category-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
         .test-category { border-right: 1px solid var(--line); padding-right: 12px; min-width: 0; }
         .test-category:last-child { border-right: 0; }
@@ -149,7 +151,11 @@
         .doctor-body h3 { margin: 0; font-size: 15px; line-height: 1.25; overflow-wrap: anywhere; color:#07194a; }
         .doctor-body .doctor-meta strong { display:none; }
         .doctor-meta { margin: 0; color: var(--muted); line-height: 1.45; overflow-wrap: anywhere; font-size:12px; }
-        .doctor-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+        .doctor-actions { display: grid; gap: 8px; margin-top: 6px; }
+        .doctor-actions .action-link { width:100%; min-height:42px; padding:8px 10px; border-radius:9px; font-size:13px; }
+        .doctor-actions .doctor-book-call { background:linear-gradient(135deg,#004aa5,#0bb7c7); color:#fff; border-color:#0b66c3; box-shadow:0 8px 18px rgba(0,74,165,.18); }
+        .doctor-call-number { display:none; color:#0b57bd; font-weight:900; font-size:13px; line-height:1.2; }
+        .doctor-card-item.is-number-visible .doctor-call-number { display:block; }
         .doctor-nav { position: absolute; top: 50%; transform: translateY(-50%); border: 0; border-radius: 999px; width: 42px; height: 42px; background: rgba(255,255,255,.94); box-shadow: 0 8px 24px rgba(16,35,61,.12); z-index: 2; cursor: pointer; }
         .doctor-prev { left: 6px; }
         .doctor-next { right: 6px; }
@@ -404,7 +410,11 @@
             const loop = carousel.dataset.loop === '1';
             const speed = parseInt(carousel.dataset.speed || '4500', 10);
             let timer = null;
+            let animationFrame = null;
             let activeIndex = 0;
+            let isDragging = false;
+            let dragStartX = 0;
+            let dragStartScroll = 0;
 
             if (! viewport || ! track) {
                 return;
@@ -453,6 +463,11 @@
                     window.clearInterval(timer);
                     timer = null;
                 }
+
+                if (animationFrame) {
+                    window.cancelAnimationFrame(animationFrame);
+                    animationFrame = null;
+                }
             };
 
             const start = () => {
@@ -461,15 +476,30 @@
                 }
 
                 stop();
-                timer = window.setInterval(() => {
-                    const maxIndex = Math.max(0, cards.length - visibleCards());
-                    if (! loop && activeIndex >= maxIndex) {
-                        stop();
-                        return;
+                const pixelsPerFrame = speed > 0 ? Math.max(.25, Math.min(1.6, 4500 / speed * .6)) : .6;
+
+                const tick = () => {
+                    if (! isDragging) {
+                        const maxScroll = track.scrollWidth - viewport.clientWidth;
+
+                        if (viewport.scrollLeft >= maxScroll - 1) {
+                            if (loop) {
+                                viewport.scrollLeft = 0;
+                            } else {
+                                stop();
+                                return;
+                            }
+                        } else {
+                            viewport.scrollLeft += pixelsPerFrame;
+                        }
+
+                        updateDots();
                     }
 
-                    scrollToIndex(activeIndex + 1);
-                }, speed);
+                    animationFrame = window.requestAnimationFrame(tick);
+                };
+
+                animationFrame = window.requestAnimationFrame(tick);
             };
 
             prev?.addEventListener('click', () => {
@@ -493,6 +523,38 @@
                 window.requestAnimationFrame(updateDots);
             });
 
+            viewport.addEventListener('pointerdown', (event) => {
+                isDragging = true;
+                dragStartX = event.clientX;
+                dragStartScroll = viewport.scrollLeft;
+                viewport.classList.add('is-dragging');
+                viewport.setPointerCapture?.(event.pointerId);
+                stop();
+            });
+
+            viewport.addEventListener('pointermove', (event) => {
+                if (! isDragging) {
+                    return;
+                }
+
+                viewport.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
+            });
+
+            const endDrag = (event) => {
+                if (! isDragging) {
+                    return;
+                }
+
+                isDragging = false;
+                viewport.classList.remove('is-dragging');
+                viewport.releasePointerCapture?.(event.pointerId);
+                start();
+            };
+
+            viewport.addEventListener('pointerup', endDrag);
+            viewport.addEventListener('pointercancel', endDrag);
+            viewport.addEventListener('pointerleave', endDrag);
+
             if (pauseOnHover) {
                 carousel.addEventListener('mouseenter', stop);
                 carousel.addEventListener('mouseleave', start);
@@ -503,6 +565,17 @@
             window.addEventListener('resize', updateDots);
             updateDots();
             start();
+        });
+
+        document.querySelectorAll('[data-doctor-call-button]').forEach((button) => {
+            button.addEventListener('click', (event) => {
+                const card = button.closest('.doctor-card-item');
+
+                if (card && ! card.classList.contains('is-number-visible')) {
+                    event.preventDefault();
+                    card.classList.add('is-number-visible');
+                }
+            });
         });
     </script>
 @endsection
