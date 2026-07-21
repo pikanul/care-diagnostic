@@ -248,9 +248,25 @@
             border-top: 4px solid #004aa5;
             border-bottom: 1px solid #cfe3f7;
             box-shadow: 0 12px 26px rgba(0, 74, 165, .08);
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: "";
+            position: absolute;
+            top: -42px;
+            right: -72px;
+            width: 360px;
+            height: 170px;
+            pointer-events: none;
+            background: radial-gradient(circle at 55% 35%, rgba(255,255,255,.98) 0 26%, rgba(255,255,255,.72) 27% 48%, rgba(255,255,255,0) 72%);
+            filter: blur(8px);
+            z-index: 0;
         }
 
         .header-inner {
+            position: relative;
+            z-index: 1;
             display: grid;
             grid-template-columns: minmax(350px, auto) minmax(0, 1fr);
             gap: 28px;
@@ -268,19 +284,28 @@
         }
 
         .brand picture {
-            display: block;
+            display: grid;
+            place-items: center;
             flex: 0 0 auto;
+            width: 76px;
+            height: 76px;
+            border-radius: 18px;
+            background: rgba(255,255,255,.96);
+            border: 1px solid rgba(11,102,195,.18);
+            box-shadow: 0 12px 24px rgba(0,74,165,.12), inset 0 0 0 5px rgba(255,255,255,.7);
         }
 
         .brand img {
             display: block;
-            width: 70px;
-            height: 70px;
+            width: 66px;
+            height: 66px;
             object-fit: contain;
-            border-radius: 999px;
-            background: #fff;
-            border: 2px solid #0b66c3;
-            padding: 4px;
+            border-radius: 12px;
+            background: transparent;
+            border: 0;
+            padding: 0;
+            image-rendering: auto;
+            filter: drop-shadow(0 3px 7px rgba(0,74,165,.12));
         }
 
         .brand-name {
@@ -622,8 +647,13 @@
             }
 
             .brand img {
-                width: 66px;
-                height: 66px;
+                width: 62px;
+                height: 62px;
+            }
+
+            .brand picture {
+                width: 72px;
+                height: 72px;
             }
 
             .brand-name strong {
@@ -736,8 +766,14 @@
             }
 
             .brand img {
-                width: 54px;
-                height: 54px;
+                width: 50px;
+                height: 50px;
+            }
+
+            .brand picture {
+                width: 58px;
+                height: 58px;
+                border-radius: 14px;
             }
 
             .brand-name strong {
