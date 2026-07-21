@@ -152,6 +152,9 @@ class HomepageBuilder
                     'title_en' => 'Comprehensive Care Under One Roof',
                     'title_bn' => 'আমাদের সুবিধা সমূহ',
                     'image_path' => 'homepage/reference/hospital-building.png',
+                    'images' => [
+                        ['image_path' => 'homepage/reference/hospital-building.png', 'display_order' => 1, 'is_active' => true],
+                    ],
                     'items' => [
                         ['title_en' => 'Indoor & Outdoor Patient Care', 'title_bn' => 'ইনডোর ও আউটডোর রোগী সেবা', 'subtitle_en' => 'Coordinated patient support', 'subtitle_bn' => 'সমন্বিত রোগী সহায়তা'],
                         ['title_en' => 'C-Section & Normal Delivery', 'title_bn' => 'সি-সেকশন ও নরমাল ডেলিভারি', 'subtitle_en' => 'Mother and child care', 'subtitle_bn' => 'মা ও শিশুর যত্ন'],

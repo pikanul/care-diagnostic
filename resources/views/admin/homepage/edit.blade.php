@@ -859,6 +859,12 @@
                         <span class="muted-hint">Current image: <a href="{{ asset('storage/'.$section->desktop_image_path) }}" target="_blank" rel="noopener">view</a></span>
                     @endif
                 </label>
+                @if ($section->section_key === 'facility-showcase')
+                    <label class="full">Add Multiple Showcase Images
+                        <input type="file" name="gallery_images[]" accept="image/*" multiple>
+                        <span class="muted-hint">These images rotate one after another in the homepage building section. Existing images can be managed from Section Data JSON.</span>
+                    </label>
+                @endif
                 <label>Accent Image
                     <input type="file" name="accent_image_path" accept="image/*">
                 </label>

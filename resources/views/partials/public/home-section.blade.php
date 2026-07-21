@@ -594,6 +594,15 @@
                     @php
                         $facilitySection = $sectionByKey('facility-showcase');
                         $facilityData = is_array($facilitySection?->section_data) ? $facilitySection->section_data : [];
+                        $facilityImages = collect($facilityData['images'] ?? [])
+                            ->filter(fn ($image) => is_array($image) && ! blank($image['image_path'] ?? null) && (array_key_exists('is_active', $image) ? (bool) $image['is_active'] : true))
+                            ->sortBy(fn ($image) => (int) ($image['display_order'] ?? 0))
+                            ->values()
+                            ->all();
+
+                        if (! $facilityImages && ! empty($facilityData['image_path'])) {
+                            $facilityImages = [['image_path' => $facilityData['image_path']]];
+                        }
                     @endphp
                     <div class="why-layout">
                         <div class="why-panel">
@@ -623,18 +632,47 @@
                             </div>
                         </div>
                         <div class="why-building">
-                            @if (! empty($facilityData['image_path']))
+                            @if ($facilityImages)
+                                <div class="building-carousel" data-building-carousel>
+                                    @foreach ($facilityImages as $image)
+                                        <img @class(['is-active' => $loop->first]) src="{{ asset('storage/'.$image['image_path']) }}" alt="{{ $title }}" loading="{{ $loop->first ? 'eager' : 'lazy' }}" decoding="async">
+                                    @endforeach
+                                </div>
+                            @elseif (! empty($facilityData['image_path']))
                                 <img src="{{ asset('storage/'.$facilityData['image_path']) }}" alt="{{ $title }}" loading="lazy" decoding="async">
                             @endif
-                            <div class="building-tags">
-                                @foreach (array_slice($facilityData['items'] ?? [], 0, 4) as $facilityItem)
-                                    <a href="{{ $localizedUrl($facilityItem['url'] ?? '/en#facility-showcase') }}">
-                                        {{ $isBn ? ($facilityItem['title_bn'] ?? $facilityItem['title_en'] ?? '') : ($facilityItem['title_en'] ?? $facilityItem['title_bn'] ?? '') }}
-                                    </a>
-                                @endforeach
-                            </div>
+                            @if (count($facilityImages) > 1)
+                                <div class="building-carousel-dots" aria-hidden="true">
+                                    @foreach ($facilityImages as $image)
+                                        <span @class(['is-active' => $loop->first])></span>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                     </div>
+                    @if (count($facilityImages) > 1)
+                        <script>
+                            document.querySelectorAll('[data-building-carousel]').forEach((carousel) => {
+                                const slides = Array.from(carousel.querySelectorAll('img'));
+                                const dots = Array.from(carousel.parentElement.querySelectorAll('.building-carousel-dots span'));
+
+                                if (slides.length < 2) {
+                                    return;
+                                }
+
+                                let activeIndex = 0;
+                                const activate = (index) => {
+                                    slides[activeIndex]?.classList.remove('is-active');
+                                    dots[activeIndex]?.classList.remove('is-active');
+                                    activeIndex = index % slides.length;
+                                    slides[activeIndex]?.classList.add('is-active');
+                                    dots[activeIndex]?.classList.add('is-active');
+                                };
+
+                                window.setInterval(() => activate(activeIndex + 1), 3600);
+                            });
+                        </script>
+                    @endif
                     @break
 
                 @case('statistics')

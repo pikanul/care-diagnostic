@@ -173,6 +173,29 @@ class HomepageSectionController extends Controller
             unset($validated['desktop_image_path'], $validated['mobile_image_path']);
         }
 
+        if ($request->hasFile('gallery_images')) {
+            $galleryImages = collect($sectionData['images'] ?? [])
+                ->filter(fn ($image) => is_array($image) && ! blank($image['image_path'] ?? null))
+                ->values()
+                ->all();
+
+            foreach ($request->file('gallery_images', []) as $index => $image) {
+                if (! $image instanceof UploadedFile) {
+                    continue;
+                }
+
+                $galleryImages[] = [
+                    'image_path' => $image->store('homepage', 'public'),
+                    'display_order' => count($galleryImages) + $index + 1,
+                    'is_active' => true,
+                ];
+            }
+
+            if ($galleryImages) {
+                $sectionData['images'] = $galleryImages;
+            }
+        }
+
         $validated['section_data'] = $sectionData;
         $validated['related_doctor_refs'] = $this->decodeJsonField($request->input('related_doctor_refs_json'));
         $validated['related_service_refs'] = $this->decodeJsonField($request->input('related_service_refs_json'));
@@ -718,14 +741,19 @@ class HomepageSectionController extends Controller
             'desktop_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
             'mobile_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
             'accent_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
+            'gallery_images' => ['nullable', 'array'],
+            'gallery_images.*' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
         ], [
             'desktop_image_path.uploaded' => 'The shared section image could not upload. The current PHP server limit is '.$this->runtimeUploadLimitMb().' MB.',
             'desktop_image_path.max' => 'The shared section image must not be larger than 50 MB.',
             'desktop_image_path.mimes' => 'The shared section image must be PNG, JPG, JPEG, or WEBP.',
+            'gallery_images.*.uploaded' => 'One of the gallery images could not upload. The current PHP server limit is '.$this->runtimeUploadLimitMb().' MB.',
+            'gallery_images.*.max' => 'Each gallery image must not be larger than 50 MB.',
             'background_image_path.uploaded' => 'The background image could not upload. The current PHP server limit is '.$this->runtimeUploadLimitMb().' MB.',
             'accent_image_path.uploaded' => 'The accent image could not upload. The current PHP server limit is '.$this->runtimeUploadLimitMb().' MB.',
         ], [
             'desktop_image_path' => 'shared section image',
+            'gallery_images.*' => 'gallery image',
             'background_image_path' => 'background image',
             'accent_image_path' => 'accent image',
         ]);
