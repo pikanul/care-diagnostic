@@ -375,7 +375,7 @@
                             @endif
                         </div>
                         @if (! empty($cta['button_label_en']))
-                            <button class="action-link" type="button" data-open-test-modal>
+                            <button class="action-link test-open-button" type="button" data-open-test-modal>
                                 {{ $isBn ? ($cta['button_label_bn'] ?? $cta['button_label_en']) : $cta['button_label_en'] }}
                             </button>
                         @endif
