@@ -147,7 +147,7 @@
         .topbar {
             background: linear-gradient(135deg, #b7d8f0 0%, #8bbde0 52%, #d8edf9 100%);
             color: #073363;
-            font-size: 17px;
+            font-size: 14px;
             font-weight: 700;
             border-bottom: 1px solid rgba(255,255,255,.58);
         }
@@ -155,32 +155,55 @@
         .topbar-inner {
             display: flex;
             justify-content: space-between;
-            gap: 28px;
+            gap: 16px;
             align-items: center;
-            min-height: 56px;
+            min-height: 42px;
             padding: 0;
             min-width: 0;
         }
 
         .topbar-meta {
             display: flex;
-            flex-wrap: wrap;
-            gap: 18px 38px;
+            flex-wrap: nowrap;
+            gap: 18px;
             align-items: center;
             min-width: 0;
+        }
+
+        .topbar-meta:first-child {
+            flex: 1 1 auto;
+        }
+
+        .topbar-meta:first-child span,
+        .topbar-meta:first-child a {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .topbar-meta:first-child span:last-child {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .topbar-meta:last-child {
+            flex: 0 0 auto;
         }
 
         .topbar-meta:first-child span::before,
         .topbar-meta:first-child a::before {
             display: inline-grid;
             place-items: center;
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            margin-right: 6px;
             border: 2px solid rgba(7,51,99,.64);
             border-radius: 999px;
-            font-size: 12px;
+            font-size: 10px;
             line-height: 1;
+            flex: 0 0 auto;
         }
 
         .topbar-meta:first-child span:first-child::before {
@@ -194,7 +217,7 @@
         .topbar-meta:first-child span:last-child::before {
             content: "●";
             border: 0;
-            font-size: 22px;
+            font-size: 16px;
             color: #073363;
         }
 
