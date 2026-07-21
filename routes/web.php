@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\HomepageSectionController;
 use App\Http\Controllers\Admin\GlobalSettingController;
 use App\Http\Controllers\Admin\NavigationItemController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\SetLocale;
 use App\Support\AdminPermissions;
 use App\Models\GlobalSetting;
@@ -185,15 +187,57 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->middleware('permission:'.AdminPermissions::MANAGE_FOOTER)
             ->name('footer-links.reorder');
 
-        Route::get('/users', FoundationPageController::class)
-            ->defaults('section', 'users')
+        Route::get('/users', [UserController::class, 'index'])
             ->middleware('permission:'.AdminPermissions::MANAGE_USERS)
             ->name('users.index');
 
-        Route::get('/roles', FoundationPageController::class)
-            ->defaults('section', 'roles')
+        Route::post('/users', [UserController::class, 'store'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_USERS)
+            ->name('users.store');
+
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_USERS)
+            ->name('users.edit');
+
+        Route::put('/users/{user}', [UserController::class, 'update'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_USERS)
+            ->name('users.update');
+
+        Route::post('/users/{user}/toggle', [UserController::class, 'toggle'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_USERS)
+            ->name('users.toggle');
+
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_USERS)
+            ->name('users.destroy');
+
+        Route::get('/roles', [RoleController::class, 'index'])
             ->middleware('permission:'.AdminPermissions::MANAGE_ROLES)
             ->name('roles.index');
+
+        Route::post('/roles', [RoleController::class, 'store'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_ROLES)
+            ->name('roles.store');
+
+        Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_ROLES)
+            ->name('roles.edit');
+
+        Route::put('/roles/{role}', [RoleController::class, 'update'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_ROLES)
+            ->name('roles.update');
+
+        Route::post('/roles/{role}/toggle', [RoleController::class, 'toggle'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_ROLES)
+            ->name('roles.toggle');
+
+        Route::delete('/roles/{role}', [RoleController::class, 'destroy'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_ROLES)
+            ->name('roles.destroy');
+
+        Route::post('/roles/{role}/restore', [RoleController::class, 'restore'])
+            ->middleware('permission:'.AdminPermissions::MANAGE_ROLES)
+            ->name('roles.restore');
 
         Route::get('/backups', FoundationPageController::class)
             ->defaults('section', 'backups')

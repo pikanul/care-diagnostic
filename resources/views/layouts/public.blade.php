@@ -78,12 +78,15 @@
             --accent-dark: #003f95;
             --accent-cyan: #0bb7c7;
             --danger: #b42318;
+            --topbar-height: 42px;
+            --header-height: 96px;
         }
 
         * { box-sizing: border-box; }
 
         html {
             scroll-behavior: smooth;
+            scroll-padding-top: calc(var(--topbar-height) + var(--header-height) + 16px);
             overflow-x: hidden;
         }
 
@@ -145,6 +148,11 @@
         }
 
         .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 41;
             background: linear-gradient(135deg, #b7d8f0 0%, #8bbde0 52%, #d8edf9 100%);
             color: #073363;
             font-size: 14px;
@@ -266,9 +274,11 @@
         }
 
         .header {
-            position: sticky;
-            top: 0;
-            z-index: 30;
+            position: fixed;
+            top: var(--topbar-height);
+            left: 0;
+            right: 0;
+            z-index: 40;
             background: linear-gradient(135deg, rgba(230,244,252,.98) 0%, rgba(184,218,240,.96) 46%, rgba(246,251,255,.98) 100%);
             backdrop-filter: blur(12px) saturate(1.08);
             -webkit-backdrop-filter: blur(12px) saturate(1.08);
@@ -494,6 +504,7 @@
         }
 
         .content {
+            padding-top: calc(var(--topbar-height) + var(--header-height));
             min-height: 36vh;
         }
 
@@ -733,6 +744,10 @@
         }
 
         @media (max-width: 1180px) {
+            :root {
+                --header-height: 82px;
+            }
+
             .header-inner {
                 grid-template-columns: auto auto;
                 gap: 12px;

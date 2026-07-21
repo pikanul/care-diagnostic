@@ -259,6 +259,88 @@
             display: inline-flex;
         }
 
+        .admin-form-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .admin-check-card,
+        .permission-builder {
+            display: grid;
+            gap: 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 14px;
+            background: #fbfdff;
+        }
+
+        .admin-check-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .check {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        .check input {
+            width: 16px;
+            height: 16px;
+            flex: 0 0 auto;
+        }
+
+        .permission-group {
+            display: grid;
+            gap: 10px;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 14px;
+        }
+
+        .permission-group:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .permission-group h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .permission-group small {
+            display: block;
+            color: #b42318;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .admin-pill-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .admin-pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 5px 9px;
+            background: #e7eef8;
+            color: #12325f;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .user-management-row,
+        .role-management-row {
+            grid-template-columns: minmax(220px, .75fr) minmax(0, 1.5fr) auto;
+        }
+
         .admin-row-actions .button,
         .admin-row-actions button,
         .admin-list-head button {
@@ -314,6 +396,10 @@
                 overflow-x: auto;
                 padding-bottom: 2px;
             }
+
+            .admin-check-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
         @media (max-width: 560px) {
@@ -327,6 +413,10 @@
             }
 
             .nav {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-check-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -435,7 +525,7 @@
                 <div class="alert">{{ session('status') }}</div>
             @endif
 
-            @if ($errors->any())
+            @if (isset($errors) && $errors->any())
                 <div class="alert danger">
                     {{ $errors->first() }}
                 </div>
