@@ -637,7 +637,13 @@
                     <div class="why-layout">
                         <div class="why-panel">
                             <div class="section-kicker">{{ $isBn ? $section->section_label_bn : $section->section_label_en }}</div>
-                            <h3>{{ $title }}</h3>
+                            <h3>
+                                @if (! $isBn && $title === 'Your Health Is Our Commitment')
+                                    Your Health Is<br>Our Commitment
+                                @else
+                                    {{ $title }}
+                                @endif
+                            </h3>
                             <p class="muted-text">{{ $summary ?: $content ?: $subtitle }}</p>
                             <ul>
                                 @foreach ($points as $point)
