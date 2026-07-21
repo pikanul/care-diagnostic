@@ -60,6 +60,55 @@
             gap: 12px;
         }
 
+        .settings-submenu {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            grid-column: 1 / -1;
+            display: grid;
+            gap: 10px;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .96);
+            box-shadow: 0 12px 28px rgba(20, 33, 61, .08);
+        }
+
+        .settings-submenu h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .settings-submenu-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .settings-submenu-links a {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: #eef6ff;
+            color: #12325f;
+            font-size: 13px;
+            font-weight: 800;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .settings-submenu-links a:hover,
+        .settings-submenu-links a.is-active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .settings-panel {
+            scroll-margin-top: 110px;
+        }
+
         .wide-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -118,6 +167,10 @@
             .marketing-row {
                 grid-template-columns: 1fr;
             }
+
+            .settings-submenu {
+                position: static;
+            }
         }
     </style>
 
@@ -125,7 +178,23 @@
         @csrf
         @method('PUT')
 
-        <div class="panel">
+        <nav class="settings-submenu" aria-label="Global Settings submenu">
+            <h2>Global Settings</h2>
+            <div class="settings-submenu-links">
+                <a class="is-active" href="#hospital-identity" data-settings-submenu-link>Hospital Identity</a>
+                <a class="is-active" href="#brand-assets" data-settings-submenu-link>Brand Assets</a>
+                <a class="is-active" href="#contact-details" data-settings-submenu-link>Contact Details</a>
+                <a class="is-active" href="#buttons-visibility" data-settings-submenu-link>Buttons & Visibility</a>
+                <a class="is-active" href="#footer-social" data-settings-submenu-link>Footer & Social</a>
+                <a class="is-active" href="#seo-settings" data-settings-submenu-link>SEO Settings</a>
+                <a class="is-active" href="#digital-marketing-tools" data-settings-submenu-link>Digital Marketing Tools</a>
+                <a class="is-active" href="#sms-integration" data-settings-submenu-link>SMS Integration</a>
+                <a class="is-active" href="#email-integration" data-settings-submenu-link>Email Integration</a>
+                <a class="is-active" href="#visitor-tracking" data-settings-submenu-link>Visitor Tracking</a>
+            </div>
+        </nav>
+
+        <div class="panel settings-panel" id="hospital-identity">
             <h2>Hospital Identity</h2>
             <label>Hospital Name (English)
                 <input type="text" name="hospital_name_en" value="{{ old('hospital_name_en', $setting->hospital_name_en) }}" required>
@@ -135,7 +204,7 @@
             </label>
         </div>
 
-        <div class="panel">
+        <div class="panel settings-panel" id="brand-assets">
             <h2>Brand Assets</h2>
             <label>Logo
                 <input type="file" name="logo_path" accept="image/*">
@@ -168,7 +237,7 @@
             @endif
         </div>
 
-        <div class="panel">
+        <div class="panel settings-panel" id="contact-details">
             <h2>Contact Details</h2>
             <label>Address (English)
                 <textarea name="address_en" rows="3">{{ old('address_en', $setting->address_en) }}</textarea>
@@ -196,7 +265,7 @@
             </label>
         </div>
 
-        <div class="panel">
+        <div class="panel settings-panel" id="buttons-visibility">
             <h2>Buttons and Visibility</h2>
             <label class="check"><input type="checkbox" name="contact_buttons_visible" value="1" @checked(old('contact_buttons_visible', $setting->contact_buttons_visible))> Contact buttons visible</label>
             <label class="check"><input type="checkbox" name="header_top_bar_visible" value="1" @checked(old('header_top_bar_visible', $setting->header_top_bar_visible))> Header top bar visible</label>
@@ -229,7 +298,7 @@
             </label>
         </div>
 
-        <div class="panel">
+        <div class="panel settings-panel" id="footer-social">
             <h2>Footer and Social</h2>
             <label>Footer Description (English)
                 <textarea name="footer_description_en" rows="3">{{ old('footer_description_en', $setting->footer_description_en) }}</textarea>
@@ -271,7 +340,7 @@
             </div>
         </div>
 
-        <div class="panel">
+        <div class="panel settings-panel" id="seo-settings">
             <h2>SEO Settings</h2>
             <div class="wide-grid">
                 <label>Meta Title (English)
@@ -319,7 +388,7 @@
             @endif
         </div>
 
-        <div class="panel">
+        <div class="panel settings-panel" id="digital-marketing-tools">
             <div class="settings-section-heading">
                 <h2 style="margin:0;">Digital Marketing Tools</h2>
                 <button class="button secondary" type="button" data-add-marketing-tool>Add Marketing Tool</button>
@@ -351,7 +420,7 @@
             </div>
         </div>
 
-        <div class="panel">
+        <div class="panel settings-panel" id="sms-integration">
             <h2>SMS Integration</h2>
             <div class="wide-grid">
                 <label class="check full-field"><input type="checkbox" name="sms_settings[enabled]" value="1" @checked(data_get($smsSettings, 'enabled'))> SMS integration enabled</label>
@@ -376,7 +445,7 @@
             </div>
         </div>
 
-        <div class="panel">
+        <div class="panel settings-panel" id="email-integration">
             <h2>Email Integration</h2>
             <div class="wide-grid">
                 <label class="check full-field"><input type="checkbox" name="email_integration_settings[enabled]" value="1" @checked(data_get($emailIntegrationSettings, 'enabled'))> Email integration enabled</label>
@@ -413,7 +482,7 @@
             </div>
         </div>
 
-        <div class="panel">
+        <div class="panel settings-panel" id="visitor-tracking">
             <h2>Visitor Tracking</h2>
             <div class="wide-grid">
                 <label class="check"><input type="checkbox" name="visitor_tracking_settings[enabled]" value="1" @checked(data_get($visitorTrackingSettings, 'enabled'))> Track website visitors</label>
