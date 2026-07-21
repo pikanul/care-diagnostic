@@ -718,7 +718,40 @@ class HomepageSectionController extends Controller
             'desktop_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
             'mobile_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
             'accent_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
+        ], [
+            'desktop_image_path.uploaded' => 'The shared section image could not upload. The current PHP server limit is '.$this->runtimeUploadLimitMb().' MB.',
+            'desktop_image_path.max' => 'The shared section image must not be larger than 50 MB.',
+            'desktop_image_path.mimes' => 'The shared section image must be PNG, JPG, JPEG, or WEBP.',
+            'background_image_path.uploaded' => 'The background image could not upload. The current PHP server limit is '.$this->runtimeUploadLimitMb().' MB.',
+            'accent_image_path.uploaded' => 'The accent image could not upload. The current PHP server limit is '.$this->runtimeUploadLimitMb().' MB.',
+        ], [
+            'desktop_image_path' => 'shared section image',
+            'background_image_path' => 'background image',
+            'accent_image_path' => 'accent image',
         ]);
+    }
+
+    private function runtimeUploadLimitMb(): int
+    {
+        $toBytes = static function (string $value): int {
+            $value = trim($value);
+            $unit = strtolower(substr($value, -1));
+            $number = (float) $value;
+
+            return match ($unit) {
+                'g' => (int) ($number * 1024 * 1024 * 1024),
+                'm' => (int) ($number * 1024 * 1024),
+                'k' => (int) ($number * 1024),
+                default => (int) $number,
+            };
+        };
+
+        $limit = min(
+            $toBytes((string) ini_get('upload_max_filesize')),
+            $toBytes((string) ini_get('post_max_size'))
+        );
+
+        return max(1, (int) floor($limit / 1024 / 1024));
     }
 
     private function decodeJsonField(mixed $value): ?array

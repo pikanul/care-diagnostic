@@ -25,6 +25,24 @@
     if ($section->section_key === 'physiotherapy-services' && empty($physioServices)) {
         $physioServices = [[]];
     }
+
+    $iniBytes = static function (string $value): int {
+        $value = trim($value);
+        $unit = strtolower(substr($value, -1));
+        $number = (float) $value;
+
+        return match ($unit) {
+            'g' => (int) ($number * 1024 * 1024 * 1024),
+            'm' => (int) ($number * 1024 * 1024),
+            'k' => (int) ($number * 1024),
+            default => (int) $number,
+        };
+    };
+
+    $phpUploadBytes = $iniBytes((string) ini_get('upload_max_filesize'));
+    $phpPostBytes = $iniBytes((string) ini_get('post_max_size'));
+    $runtimeUploadLimitBytes = min($phpUploadBytes, $phpPostBytes);
+    $runtimeUploadLimitMb = max(1, floor($runtimeUploadLimitBytes / 1024 / 1024));
 @endphp
 
 @section('content')
@@ -178,6 +196,16 @@
         .slide-preview img, .slide-preview video { width: 100%; max-height: 180px; object-fit: cover; border-radius: 10px; background: #f4f6f8; }
         .hero-add { width: fit-content; }
         .muted-hint { color: var(--muted); font-size: 12px; line-height: 1.5; }
+        .upload-limit-warning {
+            grid-column: 1 / -1;
+            border: 1px solid #f3c56a;
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #613d00;
+            background: #fff8e6;
+            font-size: 13px;
+            line-height: 1.55;
+        }
         .slide-actions { display: flex; gap: 8px; flex-wrap: wrap; }
         .danger-link { color: #a62323; }
         .doctor-builder { display: grid; gap: 14px; }
@@ -756,7 +784,7 @@
                 ])
             </div>
         @else
-            <form class="panel form-grid form-wide" method="POST" action="{{ route('admin.homepage.update', $section) }}" enctype="multipart/form-data">
+            <form class="panel form-grid form-wide" method="POST" action="{{ route('admin.homepage.update', $section) }}" enctype="multipart/form-data" data-homepage-general-form data-upload-limit-mb="{{ $runtimeUploadLimitMb }}">
                 @csrf
                 @method('PUT')
 
@@ -826,7 +854,7 @@
                 </label>
                 <label class="full">Shared Section Image
                     <input type="file" name="desktop_image_path" accept="image/*">
-                    <span class="muted-hint">One image is used for English, Bangla, desktop, and mobile. Maximum file size: 50 MB.</span>
+                    <span class="muted-hint">One image is used for English, Bangla, desktop, and mobile. Current server limit: {{ $runtimeUploadLimitMb }} MB.</span>
                     @if ($section->desktop_image_path)
                         <span class="muted-hint">Current image: <a href="{{ asset('storage/'.$section->desktop_image_path) }}" target="_blank" rel="noopener">view</a></span>
                     @endif
@@ -842,6 +870,11 @@
                 <label>Display Limit
                     <input type="number" name="display_limit" value="{{ old('display_limit', $section->display_limit) }}" min="1">
                 </label>
+                @if ($runtimeUploadLimitMb < 50)
+                    <div class="upload-limit-warning">
+                        PHP is currently allowing image uploads up to {{ $runtimeUploadLimitMb }} MB. Larger files will fail before Laravel can save them. The local server should be started with a higher `upload_max_filesize` and `post_max_size`.
+                    </div>
+                @endif
 
                 <button type="submit">Save Section</button>
             </form>
@@ -1023,4 +1056,31 @@
             })();
         </script>
     @endif
+
+    <script>
+        (function () {
+            const form = document.querySelector('[data-homepage-general-form]');
+
+            if (! form) {
+                return;
+            }
+
+            const maxUploadMb = Number(form.dataset.uploadLimitMb || 2);
+            const maxUploadBytes = maxUploadMb * 1024 * 1024;
+
+            form.addEventListener('submit', (event) => {
+                const oversized = Array.from(form.querySelectorAll('input[type="file"]')).find((field) => {
+                    return field.files && field.files[0] && field.files[0].size > maxUploadBytes;
+                });
+
+                if (! oversized) {
+                    return;
+                }
+
+                event.preventDefault();
+                oversized.focus();
+                alert(`"${oversized.files[0].name}" is too large for the current PHP server limit. Please upload an image up to ${maxUploadMb} MB, or restart the local server with a higher upload limit.`);
+            });
+        })();
+    </script>
 @endsection
