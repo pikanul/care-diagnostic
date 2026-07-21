@@ -36,8 +36,11 @@
     </div>
 
     <div class="panel">
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
-            <h2 style="margin:0;">Footer Links</h2>
+        <div class="admin-list-head">
+            <div>
+                <h2>Footer Links</h2>
+                <p class="muted" style="margin:4px 0 0;">Edit, activate, delete, and reorder footer links.</p>
+            </div>
             <button type="submit" form="footer-links-order-form">Save Order</button>
         </div>
 
@@ -47,31 +50,31 @@
 
         <div class="table-list" style="margin-top:16px;">
             @foreach ($links as $link)
-                <div class="table-row">
+                <div class="table-row admin-table-row">
                     <div>
-                        <input type="number" name="orders[{{ $link->id }}]" value="{{ $link->display_order }}" min="0" form="footer-links-order-form">
+                        <input class="admin-order-input" type="number" name="orders[{{ $link->id }}]" value="{{ $link->display_order }}" min="0" form="footer-links-order-form" aria-label="Display order for {{ $link->label_en }}">
                     </div>
                     <div>
                         <strong>{{ $link->label_en }}</strong><br>
                         <span class="muted">{{ $link->label_bn }}</span><br>
                         <span class="muted">{{ $link->section?->title_en }}</span>
                     </div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <div class="admin-row-actions">
                         <a class="button" href="{{ route('admin.footer-links.edit', $link) }}">Edit</a>
                         <form method="POST" action="{{ route('admin.footer-links.toggle', $link) }}">
                             @csrf
-                            <button type="submit">{{ $link->is_active ? 'Deactivate' : 'Activate' }}</button>
+                            <button class="secondary" type="submit">{{ $link->is_active ? 'Deactivate' : 'Activate' }}</button>
                         </form>
                         @if ($link->deleted_at)
                             <form method="POST" action="{{ route('admin.footer-links.restore', $link->id) }}">
                                 @csrf
-                                <button type="submit">Restore</button>
+                                <button class="secondary" type="submit">Restore</button>
                             </form>
                         @else
                             <form method="POST" action="{{ route('admin.footer-links.destroy', $link) }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit">Delete</button>
+                                <button class="danger-button" type="submit">Delete</button>
                             </form>
                         @endif
                     </div>

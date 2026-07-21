@@ -121,7 +121,7 @@
         }
     </style>
 
-    <form class="form-grid" method="POST" action="{{ route('admin.global-settings.update') }}" enctype="multipart/form-data">
+    <form class="form-grid form-wide" method="POST" action="{{ route('admin.global-settings.update') }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 

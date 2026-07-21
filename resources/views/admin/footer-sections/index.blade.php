@@ -24,8 +24,11 @@
     </div>
 
     <div class="panel">
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
-            <h2 style="margin:0;">Footer Sections</h2>
+        <div class="admin-list-head">
+            <div>
+                <h2>Footer Sections</h2>
+                <p class="muted" style="margin:4px 0 0;">Edit, activate, delete, and reorder footer columns.</p>
+            </div>
             <button type="submit" form="footer-sections-order-form">Save Order</button>
         </div>
 
@@ -35,30 +38,30 @@
 
         <div class="table-list" style="margin-top:16px;">
             @foreach ($sections as $section)
-                <div class="table-row">
+                <div class="table-row admin-table-row">
                     <div>
-                        <input type="number" name="orders[{{ $section->id }}]" value="{{ $section->display_order }}" min="0" form="footer-sections-order-form">
+                        <input class="admin-order-input" type="number" name="orders[{{ $section->id }}]" value="{{ $section->display_order }}" min="0" form="footer-sections-order-form" aria-label="Display order for {{ $section->title_en }}">
                     </div>
                     <div>
                         <strong>{{ $section->title_en }}</strong><br>
                         <span class="muted">{{ $section->title_bn }}</span>
                     </div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <div class="admin-row-actions">
                         <a class="button" href="{{ route('admin.footer-sections.edit', $section) }}">Edit</a>
                         <form method="POST" action="{{ route('admin.footer-sections.toggle', $section) }}">
                             @csrf
-                            <button type="submit">{{ $section->is_active ? 'Deactivate' : 'Activate' }}</button>
+                            <button class="secondary" type="submit">{{ $section->is_active ? 'Deactivate' : 'Activate' }}</button>
                         </form>
                         @if ($section->deleted_at)
                             <form method="POST" action="{{ route('admin.footer-sections.restore', $section->id) }}">
                                 @csrf
-                                <button type="submit">Restore</button>
+                                <button class="secondary" type="submit">Restore</button>
                             </form>
                         @else
                             <form method="POST" action="{{ route('admin.footer-sections.destroy', $section) }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit">Delete</button>
+                                <button class="danger-button" type="submit">Delete</button>
                             </form>
                         @endif
                     </div>

@@ -37,8 +37,11 @@
     </div>
 
     <div class="panel">
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
-            <h2 style="margin:0;">Navigation Items</h2>
+        <div class="admin-list-head">
+            <div>
+                <h2>Navigation Items</h2>
+                <p class="muted" style="margin:4px 0 0;">Edit, activate, delete, and reorder menu links.</p>
+            </div>
             <button type="submit" form="navigation-order-form">Save Order</button>
         </div>
 
@@ -48,31 +51,31 @@
 
         <div class="table-list" style="margin-top:16px;">
             @foreach ($items as $item)
-                <div class="table-row">
+                <div class="table-row admin-table-row">
                     <div>
-                        <input type="number" name="orders[{{ $item->id }}]" value="{{ $item->display_order }}" min="0" form="navigation-order-form">
+                        <input class="admin-order-input" type="number" name="orders[{{ $item->id }}]" value="{{ $item->display_order }}" min="0" form="navigation-order-form" aria-label="Display order for {{ $item->label_en }}">
                     </div>
                     <div>
                         <strong>{{ $item->label_en }}</strong><br>
                         <span class="muted">{{ $item->label_bn }}</span><br>
                         <span class="muted">{{ $item->url }}</span>
                     </div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <div class="admin-row-actions">
                         <a class="button" href="{{ route('admin.navigation.edit', $item) }}">Edit</a>
                         <form method="POST" action="{{ route('admin.navigation.toggle', $item) }}">
                             @csrf
-                            <button type="submit">{{ $item->is_active ? 'Deactivate' : 'Activate' }}</button>
+                            <button class="secondary" type="submit">{{ $item->is_active ? 'Deactivate' : 'Activate' }}</button>
                         </form>
                         @if ($item->deleted_at)
                             <form method="POST" action="{{ route('admin.navigation.restore', $item->id) }}">
                                 @csrf
-                                <button type="submit">Restore</button>
+                                <button class="secondary" type="submit">Restore</button>
                             </form>
                         @else
                             <form method="POST" action="{{ route('admin.navigation.destroy', $item) }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit">Delete</button>
+                                <button class="danger-button" type="submit">Delete</button>
                             </form>
                         @endif
                     </div>

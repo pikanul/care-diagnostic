@@ -121,18 +121,35 @@
             max-width: 720px;
         }
 
+        .form-grid.form-wide {
+            max-width: none;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            align-items: start;
+        }
+
+        .form-grid.form-wide > button,
+        .form-grid.form-wide > .full-row {
+            grid-column: 1 / -1;
+        }
+
         label {
             display: grid;
             gap: 6px;
             font-weight: 600;
         }
 
-        input {
+        input,
+        select,
+        textarea {
             width: 100%;
             border: 1px solid var(--line);
             border-radius: 8px;
             padding: 11px 12px;
             font: inherit;
+        }
+
+        textarea {
+            resize: vertical;
         }
 
         button,
@@ -174,6 +191,65 @@
             padding-bottom: 10px;
         }
 
+        .admin-list-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .admin-list-head h2 {
+            margin: 0;
+        }
+
+        .admin-table-row {
+            grid-template-columns: 120px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 0;
+        }
+
+        .admin-order-input {
+            max-width: 88px;
+            text-align: center;
+        }
+
+        .admin-row-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+
+        .admin-row-actions form {
+            margin: 0;
+            display: inline-flex;
+        }
+
+        .admin-row-actions .button,
+        .admin-row-actions button,
+        .admin-list-head button {
+            min-height: 38px;
+            padding: 9px 12px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .button.secondary,
+        button.secondary {
+            background: #e7eef8;
+            color: #12325f;
+        }
+
+        .button.danger-button,
+        button.danger-button {
+            background: #fee4e2;
+            color: #b42318;
+        }
+
         @media (max-width: 900px) {
             .admin-shell {
                 grid-template-columns: 1fr;
@@ -193,6 +269,20 @@
 
             .table-row {
                 grid-template-columns: 1fr;
+            }
+
+            .form-grid.form-wide {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-table-row {
+                align-items: stretch;
+            }
+
+            .admin-row-actions {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 2px;
             }
         }
 
