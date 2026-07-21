@@ -11,6 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\TrackWebsiteVisitor::class,
+        ]);
+
         $middleware->alias([
             'admin.auth' => \App\Http\Middleware\EnsureAdminIsAuthenticated::class,
             'admin.active' => \App\Http\Middleware\EnsureAdminIsActive::class,

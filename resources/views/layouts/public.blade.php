@@ -2,16 +2,68 @@
 @php
     $currentLocale = app()->getLocale();
     $siteSettings = $siteSettings ?? null;
+    $seoSettings = array_merge(\App\Models\GlobalSetting::defaults()['seo_settings'] ?? [], $siteSettings?->seo_settings ?? []);
+    $marketingTools = collect(data_get($siteSettings?->marketing_tools, 'tools', []))->where('is_active', true);
+    $localizedSeo = function (string $key, ?string $fallback = null) use ($seoSettings, $currentLocale): ?string {
+        return data_get($seoSettings, $key.'_'.$currentLocale)
+            ?: data_get($seoSettings, $key.'_en')
+            ?: $fallback;
+    };
+    $metaTitle = $localizedSeo('meta_title', $siteSettings?->{'hospital_name_'.$currentLocale} ?? config('app.name'));
+    $metaDescription = $localizedSeo('meta_description');
+    $metaKeywords = $localizedSeo('meta_keywords');
+    $canonicalUrl = data_get($seoSettings, 'canonical_url') ?: url()->current();
+    $ogImagePath = data_get($seoSettings, 'og_image_path');
+    $ogImageUrl = $ogImagePath ? asset('storage/'.$ogImagePath) : null;
 @endphp
 <html lang="{{ str_replace('_', '-', $currentLocale) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#004aa5">
-    <title>{{ $siteSettings?->{'hospital_name_'.$currentLocale} ?? config('app.name') }}</title>
+    <title>{{ $metaTitle }}</title>
+    @if ($metaDescription)
+        <meta name="description" content="{{ $metaDescription }}">
+    @endif
+    @if ($metaKeywords)
+        <meta name="keywords" content="{{ $metaKeywords }}">
+    @endif
+    <meta name="robots" content="{{ data_get($seoSettings, 'robots', 'index,follow') }}">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ $metaTitle }}">
+    @if ($metaDescription)
+        <meta property="og:description" content="{{ $metaDescription }}">
+    @endif
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    @if ($ogImageUrl)
+        <meta property="og:image" content="{{ $ogImageUrl }}">
+    @endif
+    <meta name="twitter:card" content="{{ $ogImageUrl ? 'summary_large_image' : 'summary' }}">
+    <meta name="twitter:title" content="{{ $metaTitle }}">
+    @if ($metaDescription)
+        <meta name="twitter:description" content="{{ $metaDescription }}">
+    @endif
+    @if ($ogImageUrl)
+        <meta name="twitter:image" content="{{ $ogImageUrl }}">
+    @endif
+    @if (data_get($seoSettings, 'google_site_verification'))
+        <meta name="google-site-verification" content="{{ data_get($seoSettings, 'google_site_verification') }}">
+    @endif
+    @if (data_get($seoSettings, 'bing_site_verification'))
+        <meta name="msvalidate.01" content="{{ data_get($seoSettings, 'bing_site_verification') }}">
+    @endif
+    @if (data_get($seoSettings, 'facebook_domain_verification'))
+        <meta name="facebook-domain-verification" content="{{ data_get($seoSettings, 'facebook_domain_verification') }}">
+    @endif
     @if ($siteSettings?->favicon_path)
         <link rel="icon" href="{{ asset('storage/'.$siteSettings->favicon_path) }}">
     @endif
+    @foreach ($marketingTools as $tool)
+        @if (data_get($tool, 'script_head'))
+            {!! data_get($tool, 'script_head') !!}
+        @endif
+    @endforeach
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -687,6 +739,12 @@
     </style>
 </head>
 <body>
+    @foreach ($marketingTools as $tool)
+        @if (data_get($tool, 'script_body'))
+            {!! data_get($tool, 'script_body') !!}
+        @endif
+    @endforeach
+
     @include('partials.public.header')
 
     <main class="content">

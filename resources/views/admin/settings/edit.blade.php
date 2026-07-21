@@ -19,6 +19,21 @@
                 ['platform' => 'whatsapp', 'url' => $setting->whatsapp_link ?? ''],
             ];
         }
+
+        $seoSettings = array_merge(\App\Models\GlobalSetting::defaults()['seo_settings'] ?? [], old('seo_settings', $setting->seo_settings ?? []));
+        $marketingRows = old('marketing_tools', data_get($setting->marketing_tools, 'tools', []));
+
+        if (! is_array($marketingRows) || $marketingRows === []) {
+            $marketingRows = [
+                ['name' => 'Google Analytics 4', 'provider' => 'google_analytics_4', 'tracking_id' => '', 'script_head' => '', 'script_body' => '', 'is_active' => false],
+                ['name' => 'Google Tag Manager', 'provider' => 'google_tag_manager', 'tracking_id' => '', 'script_head' => '', 'script_body' => '', 'is_active' => false],
+                ['name' => 'Meta Pixel', 'provider' => 'meta_pixel', 'tracking_id' => '', 'script_head' => '', 'script_body' => '', 'is_active' => false],
+            ];
+        }
+
+        $smsSettings = array_merge(\App\Models\GlobalSetting::defaults()['sms_settings'] ?? [], old('sms_settings', $setting->sms_settings ?? []));
+        $emailIntegrationSettings = array_merge(\App\Models\GlobalSetting::defaults()['email_integration_settings'] ?? [], old('email_integration_settings', $setting->email_integration_settings ?? []));
+        $visitorTrackingSettings = array_merge(\App\Models\GlobalSetting::defaults()['visitor_tracking_settings'] ?? [], old('visitor_tracking_settings', $setting->visitor_tracking_settings ?? []));
     @endphp
 
     <style>
@@ -45,11 +60,31 @@
             gap: 12px;
         }
 
+        .wide-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .full-field {
+            grid-column: 1 / -1;
+        }
+
         .social-row {
             align-items: end;
             border: 1px solid var(--line);
             border-radius: 8px;
             padding: 12px;
+        }
+
+        .marketing-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            align-items: start;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 14px;
         }
 
         .social-row label {
@@ -77,6 +112,11 @@
             .social-row {
                 align-items: stretch;
                 flex-direction: column;
+            }
+
+            .wide-grid,
+            .marketing-row {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -231,6 +271,162 @@
             </div>
         </div>
 
+        <div class="panel">
+            <h2>SEO Settings</h2>
+            <div class="wide-grid">
+                <label>Meta Title (English)
+                    <input type="text" name="seo_settings[meta_title_en]" value="{{ data_get($seoSettings, 'meta_title_en') }}">
+                </label>
+                <label>Meta Title (Bangla)
+                    <input type="text" name="seo_settings[meta_title_bn]" value="{{ data_get($seoSettings, 'meta_title_bn') }}">
+                </label>
+                <label>Meta Description (English)
+                    <textarea name="seo_settings[meta_description_en]" rows="3">{{ data_get($seoSettings, 'meta_description_en') }}</textarea>
+                </label>
+                <label>Meta Description (Bangla)
+                    <textarea name="seo_settings[meta_description_bn]" rows="3">{{ data_get($seoSettings, 'meta_description_bn') }}</textarea>
+                </label>
+                <label>Meta Keywords (English)
+                    <textarea name="seo_settings[meta_keywords_en]" rows="2">{{ data_get($seoSettings, 'meta_keywords_en') }}</textarea>
+                </label>
+                <label>Meta Keywords (Bangla)
+                    <textarea name="seo_settings[meta_keywords_bn]" rows="2">{{ data_get($seoSettings, 'meta_keywords_bn') }}</textarea>
+                </label>
+                <label>Canonical URL
+                    <input type="url" name="seo_settings[canonical_url]" value="{{ data_get($seoSettings, 'canonical_url') }}">
+                </label>
+                <label>Robots
+                    <input type="text" name="seo_settings[robots]" value="{{ data_get($seoSettings, 'robots') }}" placeholder="index,follow">
+                </label>
+                <label>Google Site Verification
+                    <input type="text" name="seo_settings[google_site_verification]" value="{{ data_get($seoSettings, 'google_site_verification') }}">
+                </label>
+                <label>Bing Site Verification
+                    <input type="text" name="seo_settings[bing_site_verification]" value="{{ data_get($seoSettings, 'bing_site_verification') }}">
+                </label>
+                <label>Facebook Domain Verification
+                    <input type="text" name="seo_settings[facebook_domain_verification]" value="{{ data_get($seoSettings, 'facebook_domain_verification') }}">
+                </label>
+                <label>Open Graph / Social Share Image
+                    <input type="file" name="seo_og_image_file" accept="image/*">
+                </label>
+            </div>
+            @if (data_get($seoSettings, 'og_image_path'))
+                <div class="asset-actions">
+                    <p class="muted">Current social share image: <a href="{{ asset('storage/'.data_get($seoSettings, 'og_image_path')) }}" target="_blank">view</a></p>
+                    <label class="check"><input type="checkbox" name="remove_seo_og_image" value="1"> Remove current social share image</label>
+                </div>
+            @endif
+        </div>
+
+        <div class="panel">
+            <div class="settings-section-heading">
+                <h2 style="margin:0;">Digital Marketing Tools</h2>
+                <button class="button secondary" type="button" data-add-marketing-tool>Add Marketing Tool</button>
+            </div>
+            <p class="muted">Add Google Analytics, Tag Manager, Meta Pixel, Hotjar, Google Ads, TikTok Pixel, LinkedIn Insight, or custom scripts here.</p>
+
+            <div class="social-list" data-marketing-tool-list>
+                @foreach ($marketingRows as $index => $row)
+                    <div class="marketing-row" data-marketing-tool-row>
+                        <label>Tool Name
+                            <input type="text" name="marketing_tools[{{ $index }}][name]" value="{{ data_get($row, 'name') }}" placeholder="Google Analytics 4">
+                        </label>
+                        <label>Provider
+                            <input type="text" name="marketing_tools[{{ $index }}][provider]" value="{{ data_get($row, 'provider') }}" placeholder="google_analytics_4">
+                        </label>
+                        <label>Tracking ID
+                            <input type="text" name="marketing_tools[{{ $index }}][tracking_id]" value="{{ data_get($row, 'tracking_id') }}" placeholder="G-XXXXXXXXXX">
+                        </label>
+                        <label class="full-field">Head Script
+                            <textarea name="marketing_tools[{{ $index }}][script_head]" rows="4" placeholder="Paste script for the HTML head">{{ data_get($row, 'script_head') }}</textarea>
+                        </label>
+                        <label class="full-field">Body Script
+                            <textarea name="marketing_tools[{{ $index }}][script_body]" rows="4" placeholder="Paste noscript/body script if needed">{{ data_get($row, 'script_body') }}</textarea>
+                        </label>
+                        <label class="check"><input type="checkbox" name="marketing_tools[{{ $index }}][is_active]" value="1" @checked(data_get($row, 'is_active'))> Active</label>
+                        <label class="check"><input type="checkbox" name="marketing_tools[{{ $index }}][remove]" value="1" @checked(data_get($row, 'remove'))> Delete</label>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>SMS Integration</h2>
+            <div class="wide-grid">
+                <label class="check full-field"><input type="checkbox" name="sms_settings[enabled]" value="1" @checked(data_get($smsSettings, 'enabled'))> SMS integration enabled</label>
+                <label>Provider
+                    <input type="text" name="sms_settings[provider]" value="{{ data_get($smsSettings, 'provider') }}" placeholder="BD Bulk SMS / Twilio / Custom">
+                </label>
+                <label>Sender ID
+                    <input type="text" name="sms_settings[sender_id]" value="{{ data_get($smsSettings, 'sender_id') }}">
+                </label>
+                <label>API Base URL
+                    <input type="url" name="sms_settings[api_base_url]" value="{{ data_get($smsSettings, 'api_base_url') }}">
+                </label>
+                <label>API Key
+                    <input type="text" name="sms_settings[api_key]" value="{{ data_get($smsSettings, 'api_key') }}">
+                </label>
+                <label>API Secret
+                    <input type="password" name="sms_settings[api_secret]" value="{{ data_get($smsSettings, 'api_secret') }}">
+                </label>
+                <label>Test Number
+                    <input type="text" name="sms_settings[test_number]" value="{{ data_get($smsSettings, 'test_number') }}">
+                </label>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Email Integration</h2>
+            <div class="wide-grid">
+                <label class="check full-field"><input type="checkbox" name="email_integration_settings[enabled]" value="1" @checked(data_get($emailIntegrationSettings, 'enabled'))> Email integration enabled</label>
+                <label>Provider
+                    <input type="text" name="email_integration_settings[provider]" value="{{ data_get($emailIntegrationSettings, 'provider') }}" placeholder="smtp / mailgun / sendgrid / ses">
+                </label>
+                <label>From Name
+                    <input type="text" name="email_integration_settings[from_name]" value="{{ data_get($emailIntegrationSettings, 'from_name') }}">
+                </label>
+                <label>From Email
+                    <input type="email" name="email_integration_settings[from_email]" value="{{ data_get($emailIntegrationSettings, 'from_email') }}">
+                </label>
+                <label>Reply-To Email
+                    <input type="email" name="email_integration_settings[reply_to]" value="{{ data_get($emailIntegrationSettings, 'reply_to') }}">
+                </label>
+                <label>SMTP Host
+                    <input type="text" name="email_integration_settings[host]" value="{{ data_get($emailIntegrationSettings, 'host') }}">
+                </label>
+                <label>SMTP Port
+                    <input type="number" name="email_integration_settings[port]" value="{{ data_get($emailIntegrationSettings, 'port') }}">
+                </label>
+                <label>Encryption
+                    <input type="text" name="email_integration_settings[encryption]" value="{{ data_get($emailIntegrationSettings, 'encryption') }}" placeholder="tls / ssl">
+                </label>
+                <label>Username
+                    <input type="text" name="email_integration_settings[username]" value="{{ data_get($emailIntegrationSettings, 'username') }}">
+                </label>
+                <label>Password
+                    <input type="password" name="email_integration_settings[password]" value="{{ data_get($emailIntegrationSettings, 'password') }}">
+                </label>
+                <label>API Key
+                    <input type="text" name="email_integration_settings[api_key]" value="{{ data_get($emailIntegrationSettings, 'api_key') }}">
+                </label>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Visitor Tracking</h2>
+            <div class="wide-grid">
+                <label class="check"><input type="checkbox" name="visitor_tracking_settings[enabled]" value="1" @checked(data_get($visitorTrackingSettings, 'enabled'))> Track website visitors</label>
+                <label class="check"><input type="checkbox" name="visitor_tracking_settings[anonymize_ip]" value="1" @checked(data_get($visitorTrackingSettings, 'anonymize_ip'))> Anonymize IP in future reports</label>
+                <label>Real-Time Active Window (minutes)
+                    <input type="number" name="visitor_tracking_settings[active_window_minutes]" value="{{ data_get($visitorTrackingSettings, 'active_window_minutes') }}" min="1" max="120">
+                </label>
+                <label>Retain Logs (days)
+                    <input type="number" name="visitor_tracking_settings[retain_days]" value="{{ data_get($visitorTrackingSettings, 'retain_days') }}" min="1" max="3650">
+                </label>
+            </div>
+        </div>
+
         <button type="submit">Save Settings</button>
     </form>
 
@@ -246,24 +442,51 @@
         </div>
     </template>
 
+    <template data-marketing-tool-template>
+        <div class="marketing-row" data-marketing-tool-row>
+            <label>Tool Name
+                <input type="text" data-name="marketing_tools[__INDEX__][name]" placeholder="Google Analytics 4">
+            </label>
+            <label>Provider
+                <input type="text" data-name="marketing_tools[__INDEX__][provider]" placeholder="google_analytics_4">
+            </label>
+            <label>Tracking ID
+                <input type="text" data-name="marketing_tools[__INDEX__][tracking_id]" placeholder="G-XXXXXXXXXX">
+            </label>
+            <label class="full-field">Head Script
+                <textarea data-name="marketing_tools[__INDEX__][script_head]" rows="4" placeholder="Paste script for the HTML head"></textarea>
+            </label>
+            <label class="full-field">Body Script
+                <textarea data-name="marketing_tools[__INDEX__][script_body]" rows="4" placeholder="Paste noscript/body script if needed"></textarea>
+            </label>
+            <label class="check"><input type="checkbox" data-name="marketing_tools[__INDEX__][is_active]" value="1"> Active</label>
+            <label class="check"><input type="checkbox" data-name="marketing_tools[__INDEX__][remove]" value="1"> Delete</label>
+        </div>
+    </template>
+
     <script>
-        document.querySelector('[data-add-social-link]')?.addEventListener('click', () => {
-            const list = document.querySelector('[data-social-link-list]');
-            const template = document.querySelector('[data-social-link-template]');
+        const addRepeatableRow = (buttonSelector, listSelector, templateSelector, rowSelector) => {
+            document.querySelector(buttonSelector)?.addEventListener('click', () => {
+                const list = document.querySelector(listSelector);
+                const template = document.querySelector(templateSelector);
 
-            if (!list || !template) {
-                return;
-            }
+                if (!list || !template) {
+                    return;
+                }
 
-            const index = list.querySelectorAll('[data-social-link-row]').length;
-            const fragment = template.content.cloneNode(true);
+                const index = list.querySelectorAll(rowSelector).length;
+                const fragment = template.content.cloneNode(true);
 
-            fragment.querySelectorAll('[data-name]').forEach((input) => {
-                input.name = input.dataset.name.replace('__INDEX__', index);
-                input.removeAttribute('data-name');
+                fragment.querySelectorAll('[data-name]').forEach((input) => {
+                    input.name = input.dataset.name.replace('__INDEX__', index);
+                    input.removeAttribute('data-name');
+                });
+
+                list.appendChild(fragment);
             });
+        };
 
-            list.appendChild(fragment);
-        });
+        addRepeatableRow('[data-add-social-link]', '[data-social-link-list]', '[data-social-link-template]', '[data-social-link-row]');
+        addRepeatableRow('[data-add-marketing-tool]', '[data-marketing-tool-list]', '[data-marketing-tool-template]', '[data-marketing-tool-row]');
     </script>
 @endsection
