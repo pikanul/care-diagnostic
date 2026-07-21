@@ -100,6 +100,11 @@ class GlobalSettingController extends Controller
             'visitor_tracking_settings.anonymize_ip' => ['nullable', 'boolean'],
             'visitor_tracking_settings.active_window_minutes' => ['nullable', 'integer', 'min:1', 'max:120'],
             'visitor_tracking_settings.retain_days' => ['nullable', 'integer', 'min:1', 'max:3650'],
+            'visitor_tracking_settings.cookie_consent_enabled' => ['nullable', 'boolean'],
+            'visitor_tracking_settings.cookie_banner_text_en' => ['nullable', 'string', 'max:500'],
+            'visitor_tracking_settings.cookie_banner_text_bn' => ['nullable', 'string', 'max:500'],
+            'visitor_tracking_settings.cookie_privacy_url' => ['nullable', 'string', 'max:255'],
+            'visitor_tracking_settings.web_vitals_enabled' => ['nullable', 'boolean'],
             'default_language' => ['required', Rule::in(['en', 'bn'])],
             'contact_buttons_visible' => ['nullable', 'boolean'],
             'header_top_bar_visible' => ['nullable', 'boolean'],
@@ -300,6 +305,11 @@ class GlobalSettingController extends Controller
             'anonymize_ip' => ! empty($settings['anonymize_ip']),
             'active_window_minutes' => (int) ($settings['active_window_minutes'] ?? 5),
             'retain_days' => (int) ($settings['retain_days'] ?? 365),
+            'cookie_consent_enabled' => ! empty($settings['cookie_consent_enabled']),
+            'cookie_banner_text_en' => (string) ($settings['cookie_banner_text_en'] ?? ''),
+            'cookie_banner_text_bn' => (string) ($settings['cookie_banner_text_bn'] ?? ''),
+            'cookie_privacy_url' => (string) ($settings['cookie_privacy_url'] ?? ''),
+            'web_vitals_enabled' => ! empty($settings['web_vitals_enabled']),
         ];
     }
 }

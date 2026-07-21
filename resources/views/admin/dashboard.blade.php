@@ -307,6 +307,40 @@
         </article>
     </section>
 
+    <section class="dashboard-charts">
+        <article class="panel">
+            <h2>Core Web Vitals</h2>
+            <p class="muted">Average browser performance samples from the last 7 days.</p>
+            <div class="table-list">
+                @forelse ($visitorStats['webVitals'] as $metric)
+                    <div class="table-row">
+                        <div><strong>{{ $metric->metric }}</strong></div>
+                        <div>{{ number_format((float) $metric->average_value, 2) }}</div>
+                        <div class="muted">{{ number_format($metric->samples) }} samples</div>
+                    </div>
+                @empty
+                    <p class="muted">No Core Web Vitals data yet.</p>
+                @endforelse
+            </div>
+        </article>
+
+        <article class="panel">
+            <h2>404 / Broken Links</h2>
+            <p class="muted">Most frequent missing URLs captured from visitors.</p>
+            <div class="table-list">
+                @forelse ($visitorStats['notFoundErrors'] as $error)
+                    <div class="table-row">
+                        <div>{{ $error->path }}</div>
+                        <div class="muted">{{ number_format($error->hits) }} hits</div>
+                        <div class="muted">{{ \Illuminate\Support\Carbon::parse($error->last_seen)->diffForHumans() }}</div>
+                    </div>
+                @empty
+                    <p class="muted">No broken links recorded yet.</p>
+                @endforelse
+            </div>
+        </article>
+    </section>
+
     <section class="panel" style="margin-top: 16px;">
         <h2>Recent visitors</h2>
 

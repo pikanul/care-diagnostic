@@ -7,6 +7,8 @@ use App\Models\AuditLog;
 use App\Models\User;
 use App\Models\VisitorLog;
 use App\Models\GlobalSetting;
+use App\Models\WebVitalLog;
+use App\Models\WebsiteErrorLog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -30,6 +32,8 @@ class DashboardController extends Controller
                 'devices' => [],
                 'sources' => [],
             ],
+            'webVitals' => collect(),
+            'notFoundErrors' => collect(),
         ];
 
         if (Schema::hasTable('visitor_logs')) {
@@ -106,6 +110,21 @@ class DashboardController extends Controller
                         'value' => (int) $row->visits,
                     ])->values()->all(),
                 ],
+                'webVitals' => Schema::hasTable('web_vital_logs')
+                    ? WebVitalLog::select('metric', DB::raw('avg(value) as average_value'), DB::raw('count(*) as samples'))
+                        ->where('created_at', '>=', now()->subDays(7))
+                        ->groupBy('metric')
+                        ->orderBy('metric')
+                        ->get()
+                    : collect(),
+                'notFoundErrors' => Schema::hasTable('website_error_logs')
+                    ? WebsiteErrorLog::select('path', DB::raw('count(*) as hits'), DB::raw('max(created_at) as last_seen'))
+                        ->where('status_code', 404)
+                        ->groupBy('path')
+                        ->orderByDesc('hits')
+                        ->limit(8)
+                        ->get()
+                    : collect(),
             ];
         }
 

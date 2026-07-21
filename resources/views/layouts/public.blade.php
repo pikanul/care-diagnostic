@@ -4,6 +4,16 @@
     $siteSettings = $siteSettings ?? null;
     $seoSettings = array_merge(\App\Models\GlobalSetting::defaults()['seo_settings'] ?? [], $siteSettings?->seo_settings ?? []);
     $marketingTools = collect(data_get($siteSettings?->marketing_tools, 'tools', []))->where('is_active', true);
+    $toolByProvider = $marketingTools->keyBy(fn ($tool) => data_get($tool, 'provider'));
+    $visitorSettings = array_merge(\App\Models\GlobalSetting::defaults()['visitor_tracking_settings'] ?? [], $siteSettings?->visitor_tracking_settings ?? []);
+    $cookieConsentEnabled = (bool) data_get($visitorSettings, 'cookie_consent_enabled', true);
+    $webVitalsEnabled = (bool) data_get($visitorSettings, 'web_vitals_enabled', true);
+    $scriptType = $cookieConsentEnabled ? 'text/plain' : 'text/javascript';
+    $scriptConsentAttrs = $cookieConsentEnabled ? 'data-cookie-script="analytics"' : '';
+    $ga4Id = data_get($toolByProvider->get('google_analytics_4'), 'tracking_id');
+    $gtmId = data_get($toolByProvider->get('google_tag_manager'), 'tracking_id');
+    $metaPixelId = data_get($toolByProvider->get('meta_pixel'), 'tracking_id');
+    $clarityId = data_get($toolByProvider->get('microsoft_clarity'), 'tracking_id');
     $localizedSeo = function (string $key, ?string $fallback = null) use ($seoSettings, $currentLocale): ?string {
         return data_get($seoSettings, $key.'_'.$currentLocale)
             ?: data_get($seoSettings, $key.'_en')
@@ -15,11 +25,27 @@
     $canonicalUrl = data_get($seoSettings, 'canonical_url') ?: url()->current();
     $ogImagePath = data_get($seoSettings, 'og_image_path');
     $ogImageUrl = $ogImagePath ? asset('storage/'.$ogImagePath) : null;
+    $alternatePath = preg_replace('~^/(en|bn)(/|$)~', '/', request()->getPathInfo()) ?: '/';
+    $schemaAddress = $siteSettings?->{'address_'.$currentLocale} ?: $siteSettings?->address_en;
+    $medicalClinicSchema = json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'MedicalClinic',
+        'name' => $siteSettings?->{'hospital_name_'.$currentLocale} ?? config('app.name'),
+        'url' => url('/'.$currentLocale),
+        'logo' => $siteSettings?->logo_path ? asset('storage/'.$siteSettings->logo_path) : null,
+        'image' => $ogImageUrl,
+        'telephone' => $siteSettings?->phone_primary,
+        'email' => $siteSettings?->email,
+        'address' => $schemaAddress,
+        'medicalSpecialty' => ['Diagnostic', 'Physiotherapy', 'PrimaryCare'],
+        'sameAs' => collect($siteSettings?->social_links ?? [])->filter()->values()->all(),
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 @endphp
 <html lang="{{ str_replace('_', '-', $currentLocale) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#004aa5">
     <title>{{ $metaTitle }}</title>
     @if ($metaDescription)
@@ -30,6 +56,9 @@
     @endif
     <meta name="robots" content="{{ data_get($seoSettings, 'robots', 'index,follow') }}">
     <link rel="canonical" href="{{ $canonicalUrl }}">
+    <link rel="alternate" hreflang="en" href="{{ url('/en'.($alternatePath === '/' ? '' : $alternatePath)) }}">
+    <link rel="alternate" hreflang="bn" href="{{ url('/bn'.($alternatePath === '/' ? '' : $alternatePath)) }}">
+    <link rel="alternate" hreflang="x-default" href="{{ url('/en'.($alternatePath === '/' ? '' : $alternatePath)) }}">
     <meta property="og:type" content="website">
     <meta property="og:title" content="{{ $metaTitle }}">
     @if ($metaDescription)
@@ -59,11 +88,55 @@
     @if ($siteSettings?->favicon_path)
         <link rel="icon" href="{{ asset('storage/'.$siteSettings->favicon_path) }}">
     @endif
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    <link rel="dns-prefetch" href="//connect.facebook.net">
+    <link rel="dns-prefetch" href="//www.clarity.ms">
+    @if ($ga4Id)
+        <script type="{{ $scriptType }}" {!! $scriptConsentAttrs !!} async src="https://www.googletagmanager.com/gtag/js?id={{ $ga4Id }}"></script>
+        <script type="{{ $scriptType }}" {!! $scriptConsentAttrs !!}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '{{ $ga4Id }}', { anonymize_ip: true });
+        </script>
+    @endif
+    @if ($gtmId)
+        <script type="{{ $scriptType }}" {!! $scriptConsentAttrs !!}>
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','{{ $gtmId }}');
+        </script>
+    @endif
+    @if ($metaPixelId)
+        <script type="{{ $scriptType }}" {!! $scriptConsentAttrs !!}>
+            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+            n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+            (window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '{{ $metaPixelId }}');
+            fbq('track', 'PageView');
+        </script>
+    @endif
+    @if ($clarityId)
+        <script type="{{ $scriptType }}" {!! $scriptConsentAttrs !!}>
+            (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, 'clarity', 'script', '{{ $clarityId }}');
+        </script>
+    @endif
     @foreach ($marketingTools as $tool)
         @if (data_get($tool, 'script_head'))
             {!! data_get($tool, 'script_head') !!}
         @endif
     @endforeach
+    <script type="application/ld+json">
+        {!! $medicalClinicSchema !!}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -812,6 +885,46 @@
             color: #fff;
         }
 
+        .cookie-consent {
+            position: fixed;
+            left: 18px;
+            right: 18px;
+            bottom: 18px;
+            z-index: 120;
+            display: none;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 14px;
+            align-items: center;
+            width: min(960px, calc(100% - 36px));
+            margin: 0 auto;
+            border: 1px solid rgba(255,255,255,.72);
+            border-radius: 14px;
+            padding: 14px;
+            background: rgba(255,255,255,.92);
+            color: var(--text);
+            box-shadow: 0 22px 70px rgba(5, 35, 82, .22);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .cookie-consent.is-visible {
+            display: grid;
+        }
+
+        .cookie-consent p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .cookie-consent-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
         @media (max-width: 1500px) {
             .container {
                 width: min(1320px, calc(100% - 64px));
@@ -924,6 +1037,20 @@
             .mobile-action-bar {
                 display: grid;
             }
+
+            .cookie-consent {
+                bottom: 66px;
+                grid-template-columns: 1fr;
+            }
+
+            .cookie-consent-actions {
+                justify-content: stretch;
+            }
+
+            .cookie-consent-actions button,
+            .cookie-consent-actions a {
+                flex: 1 1 auto;
+            }
         }
 
         @media (max-width: 560px) {
@@ -1031,12 +1158,59 @@
         </div>
     </div>
 
+    @if ($cookieConsentEnabled)
+        <div class="cookie-consent" data-cookie-consent role="dialog" aria-live="polite" aria-label="{{ $currentLocale === 'bn' ? 'কুকি সম্মতি' : 'Cookie consent' }}">
+            <p>{{ data_get($visitorSettings, 'cookie_banner_text_'.$currentLocale) ?: data_get($visitorSettings, 'cookie_banner_text_en') }}</p>
+            <div class="cookie-consent-actions">
+                @if (data_get($visitorSettings, 'cookie_privacy_url'))
+                    <a class="action-link" href="{{ data_get($visitorSettings, 'cookie_privacy_url') }}">{{ $currentLocale === 'bn' ? 'গোপনীয়তা' : 'Privacy' }}</a>
+                @endif
+                <button class="action-link" type="button" data-cookie-reject>{{ $currentLocale === 'bn' ? 'প্রয়োজনীয় মাত্র' : 'Essential only' }}</button>
+                <button class="action-link primary" type="button" data-cookie-accept>{{ $currentLocale === 'bn' ? 'সম্মতি দিন' : 'Accept' }}</button>
+            </div>
+        </div>
+    @endif
+
     <script>
         const toggle = document.querySelector('[data-menu-toggle]');
         const menu = document.querySelector('[data-menu-panel]');
         const phoneModal = document.querySelector('[data-phone-modal]');
         const phoneModalClose = document.querySelector('[data-phone-modal-close]');
         const topbar = document.querySelector('.topbar');
+        const cookieConsent = document.querySelector('[data-cookie-consent]');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        const activateCookieScripts = () => {
+            document.querySelectorAll('script[type="text/plain"][data-cookie-script="analytics"]').forEach((script) => {
+                const activeScript = document.createElement('script');
+                Array.from(script.attributes).forEach((attribute) => {
+                    if (!['type', 'data-cookie-script'].includes(attribute.name)) {
+                        activeScript.setAttribute(attribute.name, attribute.value);
+                    }
+                });
+                activeScript.type = 'text/javascript';
+                activeScript.text = script.textContent;
+                script.replaceWith(activeScript);
+            });
+        };
+
+        const cookieChoice = localStorage.getItem('care_cookie_consent');
+        if (cookieChoice === 'accepted') {
+            activateCookieScripts();
+        } else if (cookieConsent && !cookieChoice) {
+            cookieConsent.classList.add('is-visible');
+        }
+
+        document.querySelector('[data-cookie-accept]')?.addEventListener('click', () => {
+            localStorage.setItem('care_cookie_consent', 'accepted');
+            cookieConsent?.classList.remove('is-visible');
+            activateCookieScripts();
+        });
+
+        document.querySelector('[data-cookie-reject]')?.addEventListener('click', () => {
+            localStorage.setItem('care_cookie_consent', 'essential');
+            cookieConsent?.classList.remove('is-visible');
+        });
 
         const updateTopbarState = () => {
             if (! topbar) {
@@ -1108,6 +1282,108 @@
                 window.location.href = link.href + window.location.hash;
             });
         });
+
+        const trackMarketingEvent = (name, parameters = {}) => {
+            if (typeof window.gtag === 'function') {
+                window.gtag('event', name, parameters);
+            }
+            if (typeof window.fbq === 'function') {
+                window.fbq('trackCustom', name, parameters);
+            }
+        };
+
+        document.addEventListener('click', (event) => {
+            const link = event.target.closest('a[href]');
+            if (!link) {
+                return;
+            }
+
+            const href = link.getAttribute('href') || '';
+            if (href.startsWith('tel:')) {
+                trackMarketingEvent('phone_click', { link_url: href });
+            } else if (href.toLowerCase().includes('whatsapp')) {
+                trackMarketingEvent('whatsapp_click', { link_url: href });
+            } else if (href.includes('appointment')) {
+                trackMarketingEvent('appointment_click', { link_url: href });
+            }
+        });
+
+        @if ($webVitalsEnabled)
+            (() => {
+                const postMetric = (metric, value, rating, metadata = {}) => {
+                    if (!csrfToken) {
+                        return;
+                    }
+
+                    fetch('{{ route('web-vitals.store') }}', {
+                        method: 'POST',
+                        keepalive: true,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            metric,
+                            value,
+                            rating,
+                            path: window.location.pathname,
+                            url: window.location.href,
+                            metadata,
+                        }),
+                    }).catch(() => {});
+                };
+
+                const ratingFor = (metric, value) => {
+                    const thresholds = {
+                        LCP: [2500, 4000],
+                        CLS: [0.1, 0.25],
+                        FID: [100, 300],
+                        INP: [200, 500],
+                        TTFB: [800, 1800],
+                    }[metric] || [0, 0];
+                    return value <= thresholds[0] ? 'good' : (value <= thresholds[1] ? 'needs-improvement' : 'poor');
+                };
+
+                window.addEventListener('load', () => {
+                    const nav = performance.getEntriesByType('navigation')[0];
+                    if (nav) {
+                        const ttfb = nav.responseStart - nav.requestStart;
+                        postMetric('TTFB', Math.max(0, ttfb), ratingFor('TTFB', ttfb));
+                    }
+                });
+
+                try {
+                    new PerformanceObserver((list) => {
+                        const entry = list.getEntries().at(-1);
+                        if (entry) {
+                            postMetric('LCP', entry.startTime, ratingFor('LCP', entry.startTime), { element: entry.element?.tagName || null });
+                        }
+                    }).observe({ type: 'largest-contentful-paint', buffered: true });
+                } catch (error) {}
+
+                try {
+                    let clsValue = 0;
+                    new PerformanceObserver((list) => {
+                        list.getEntries().forEach((entry) => {
+                            if (!entry.hadRecentInput) {
+                                clsValue += entry.value;
+                            }
+                        });
+                        postMetric('CLS', clsValue, ratingFor('CLS', clsValue));
+                    }).observe({ type: 'layout-shift', buffered: true });
+                } catch (error) {}
+
+                try {
+                    new PerformanceObserver((list) => {
+                        list.getEntries().forEach((entry) => {
+                            const value = entry.processingStart - entry.startTime;
+                            postMetric('FID', value, ratingFor('FID', value), { name: entry.name });
+                        });
+                    }).observe({ type: 'first-input', buffered: true });
+                } catch (error) {}
+            })();
+        @endif
     </script>
 </body>
 </html>

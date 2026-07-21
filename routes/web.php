@@ -11,6 +11,10 @@ use App\Http\Controllers\Admin\NavigationItemController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Public\NotFoundController;
+use App\Http\Controllers\Public\SearchController;
+use App\Http\Controllers\Public\SeoController;
+use App\Http\Controllers\Public\WebVitalController;
 use App\Http\Middleware\SetLocale;
 use App\Support\AdminPermissions;
 use App\Models\GlobalSetting;
@@ -48,6 +52,14 @@ Route::prefix('{locale}')
     });
 
 Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
+Route::post('/web-vitals', [WebVitalController::class, 'store'])->name('web-vitals.store');
+
+Route::get('/{locale}/search/suggest', [SearchController::class, 'suggest'])
+    ->whereIn('locale', SetLocale::SUPPORTED_LOCALES)
+    ->middleware('locale')
+    ->name('search.suggest');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -260,3 +272,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('destructive-actions.index');
     });
 });
+
+Route::fallback(NotFoundController::class);

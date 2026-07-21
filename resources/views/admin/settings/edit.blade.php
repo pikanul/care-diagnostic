@@ -28,6 +28,7 @@
                 ['name' => 'Google Analytics 4', 'provider' => 'google_analytics_4', 'tracking_id' => '', 'script_head' => '', 'script_body' => '', 'is_active' => false],
                 ['name' => 'Google Tag Manager', 'provider' => 'google_tag_manager', 'tracking_id' => '', 'script_head' => '', 'script_body' => '', 'is_active' => false],
                 ['name' => 'Meta Pixel', 'provider' => 'meta_pixel', 'tracking_id' => '', 'script_head' => '', 'script_body' => '', 'is_active' => false],
+                ['name' => 'Microsoft Clarity', 'provider' => 'microsoft_clarity', 'tracking_id' => '', 'script_head' => '', 'script_body' => '', 'is_active' => false],
             ];
         }
 
@@ -487,11 +488,22 @@
             <div class="wide-grid">
                 <label class="check"><input type="checkbox" name="visitor_tracking_settings[enabled]" value="1" @checked(data_get($visitorTrackingSettings, 'enabled'))> Track website visitors</label>
                 <label class="check"><input type="checkbox" name="visitor_tracking_settings[anonymize_ip]" value="1" @checked(data_get($visitorTrackingSettings, 'anonymize_ip'))> Anonymize IP in future reports</label>
+                <label class="check"><input type="checkbox" name="visitor_tracking_settings[web_vitals_enabled]" value="1" @checked(data_get($visitorTrackingSettings, 'web_vitals_enabled'))> Track Core Web Vitals</label>
+                <label class="check"><input type="checkbox" name="visitor_tracking_settings[cookie_consent_enabled]" value="1" @checked(data_get($visitorTrackingSettings, 'cookie_consent_enabled'))> Cookie consent banner enabled</label>
                 <label>Real-Time Active Window (minutes)
                     <input type="number" name="visitor_tracking_settings[active_window_minutes]" value="{{ data_get($visitorTrackingSettings, 'active_window_minutes') }}" min="1" max="120">
                 </label>
                 <label>Retain Logs (days)
                     <input type="number" name="visitor_tracking_settings[retain_days]" value="{{ data_get($visitorTrackingSettings, 'retain_days') }}" min="1" max="3650">
+                </label>
+                <label class="full-field">Cookie Banner Text (English)
+                    <textarea name="visitor_tracking_settings[cookie_banner_text_en]" rows="2">{{ data_get($visitorTrackingSettings, 'cookie_banner_text_en') }}</textarea>
+                </label>
+                <label class="full-field">Cookie Banner Text (Bangla)
+                    <textarea name="visitor_tracking_settings[cookie_banner_text_bn]" rows="2">{{ data_get($visitorTrackingSettings, 'cookie_banner_text_bn') }}</textarea>
+                </label>
+                <label class="full-field">Privacy / Cookie Policy URL
+                    <input type="text" name="visitor_tracking_settings[cookie_privacy_url]" value="{{ data_get($visitorTrackingSettings, 'cookie_privacy_url') }}" placeholder="/en/privacy-policy">
                 </label>
             </div>
         </div>
