@@ -824,18 +824,18 @@
                 <label>Background Image
                     <input type="file" name="background_image_path" accept="image/*">
                 </label>
-                <label>Desktop Image
+                <label class="full">Shared Section Image
                     <input type="file" name="desktop_image_path" accept="image/*">
-                </label>
-                <label>Mobile Image
-                    <input type="file" name="mobile_image_path" accept="image/*">
+                    <span class="muted-hint">One image is used for English, Bangla, desktop, and mobile. Maximum file size: 50 MB.</span>
+                    @if ($section->desktop_image_path)
+                        <span class="muted-hint">Current image: <a href="{{ asset('storage/'.$section->desktop_image_path) }}" target="_blank" rel="noopener">view</a></span>
+                    @endif
                 </label>
                 <label>Accent Image
                     <input type="file" name="accent_image_path" accept="image/*">
                 </label>
                 <label class="check"><input type="checkbox" name="is_active" value="1" @checked(old('is_active', $section->is_active))> Active</label>
                 <label class="check"><input type="checkbox" name="auto_scroll" value="1" @checked(old('auto_scroll', $section->auto_scroll))> Auto-scroll</label>
-                <label class="check"><input type="checkbox" name="preview_enabled" value="1" @checked(old('preview_enabled', $section->preview_enabled))> Preview before publishing</label>
                 <label>Carousel Speed (ms)
                     <input type="number" name="carousel_speed" value="{{ old('carousel_speed', $section->carousel_speed) }}" min="500" step="100">
                 </label>
@@ -845,14 +845,6 @@
 
                 <button type="submit">Save Section</button>
             </form>
-
-            <div class="panel builder-preview">
-                <h2 style="margin-top:0;">Preview</h2>
-                @include('partials.public.home-section', [
-                    'section' => $section,
-                    'preview' => true,
-                ])
-            </div>
         @endif
     </div>
 

@@ -15,7 +15,7 @@ use Illuminate\View\View;
 
 class HomepageSectionController extends Controller
 {
-    private const IMAGE_MAX_KB = 20480;
+    private const IMAGE_MAX_KB = 51200;
 
     public function index(): View
     {
@@ -136,8 +136,6 @@ class HomepageSectionController extends Controller
 
         foreach ([
             'background_image_path',
-            'desktop_image_path',
-            'mobile_image_path',
             'accent_image_path',
         ] as $field) {
             if ($request->hasFile($field)) {
@@ -151,15 +149,41 @@ class HomepageSectionController extends Controller
             }
         }
 
-        $validated['section_data'] = $this->decodeJsonField($request->input('section_data_json'));
+        $sectionData = $this->decodeJsonField($request->input('section_data_json'));
+
+        if ($request->hasFile('desktop_image_path')) {
+            foreach (['desktop_image_path', 'mobile_image_path'] as $field) {
+                if ($homepageSection->{$field} && $homepageSection->{$field} !== $homepageSection->desktop_image_path) {
+                    Storage::disk('public')->delete($homepageSection->{$field});
+                }
+            }
+
+            if ($homepageSection->desktop_image_path) {
+                Storage::disk('public')->delete($homepageSection->desktop_image_path);
+            }
+
+            $sharedImage = $request->file('desktop_image_path')->store('homepage', 'public');
+            $validated['desktop_image_path'] = $sharedImage;
+            $validated['mobile_image_path'] = $sharedImage;
+
+            if (is_array($sectionData)) {
+                $sectionData['image_path'] = $sharedImage;
+            }
+        } else {
+            unset($validated['desktop_image_path'], $validated['mobile_image_path']);
+        }
+
+        $validated['section_data'] = $sectionData;
         $validated['related_doctor_refs'] = $this->decodeJsonField($request->input('related_doctor_refs_json'));
         $validated['related_service_refs'] = $this->decodeJsonField($request->input('related_service_refs_json'));
         $validated['related_test_refs'] = $this->decodeJsonField($request->input('related_test_refs_json'));
         $validated['related_post_refs'] = $this->decodeJsonField($request->input('related_post_refs_json'));
 
-        foreach (['is_active', 'auto_scroll', 'preview_enabled'] as $booleanField) {
+        foreach (['is_active', 'auto_scroll'] as $booleanField) {
             $validated[$booleanField] = $request->boolean($booleanField);
         }
+
+        $validated['preview_enabled'] = false;
 
         $homepageSection->update($validated);
 
