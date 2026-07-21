@@ -15,6 +15,8 @@ use Illuminate\View\View;
 
 class HomepageSectionController extends Controller
 {
+    private const IMAGE_MAX_KB = 20480;
+
     public function index(): View
     {
         $this->ensureDefaults();
@@ -265,8 +267,8 @@ class HomepageSectionController extends Controller
             'hero_slides' => ['required', 'array', 'min:1'],
             'hero_slides.*.display_order' => ['nullable', 'integer', 'min:0'],
             'hero_slides.*.is_active' => ['nullable', 'boolean'],
-            'hero_slides.*.title_en' => ['required', 'string', 'max:255'],
-            'hero_slides.*.title_bn' => ['required', 'string', 'max:255'],
+            'hero_slides.*.title_en' => ['nullable', 'string', 'max:255'],
+            'hero_slides.*.title_bn' => ['nullable', 'string', 'max:255'],
             'hero_slides.*.subtitle_en' => ['nullable', 'string', 'max:255'],
             'hero_slides.*.subtitle_bn' => ['nullable', 'string', 'max:255'],
             'hero_slides.*.primary_cta_label_en' => ['nullable', 'string', 'max:255'],
@@ -279,10 +281,12 @@ class HomepageSectionController extends Controller
             'hero_slides.*.expires_at' => ['nullable', 'date'],
             'hero_slides.*.overlay_opacity' => ['nullable', 'integer', 'min:0', 'max:100'],
             'hero_slides.*.text_alignment' => ['nullable', 'string', Rule::in(['left', 'center', 'right'])],
-            'hero_slides.*.desktop_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
-            'hero_slides.*.mobile_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
+            'hero_slides.*.desktop_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
+            'hero_slides.*.mobile_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
             'hero_slides.*.desktop_image_path' => ['nullable', 'string', 'max:255'],
             'hero_slides.*.mobile_image_path' => ['nullable', 'string', 'max:255'],
+            'hero_slides.*.remove_desktop_image' => ['nullable', 'boolean'],
+            'hero_slides.*.remove_mobile_image' => ['nullable', 'boolean'],
         ]);
     }
 
@@ -305,8 +309,21 @@ class HomepageSectionController extends Controller
         foreach ((array) $request->input('hero_slides', []) as $index => $slide) {
             $existingSlide = $existing['slides'][$index] ?? [];
 
-            $desktopImage = $this->storeUploadedFile($request, "hero_slides.$index.desktop_image_file", 'homepage', $existingSlide['desktop_image_path'] ?? ($slide['desktop_image_path'] ?? null));
-            $mobileImage = $this->storeUploadedFile($request, "hero_slides.$index.mobile_image_file", 'homepage', $existingSlide['mobile_image_path'] ?? ($slide['mobile_image_path'] ?? null));
+            $desktopImage = $existingSlide['desktop_image_path'] ?? ($slide['desktop_image_path'] ?? null);
+            $mobileImage = $existingSlide['mobile_image_path'] ?? ($slide['mobile_image_path'] ?? null);
+
+            if ($request->boolean("hero_slides.$index.remove_desktop_image")) {
+                $this->deleteStoredFile($desktopImage);
+                $desktopImage = null;
+            }
+
+            if ($request->boolean("hero_slides.$index.remove_mobile_image")) {
+                $this->deleteStoredFile($mobileImage);
+                $mobileImage = null;
+            }
+
+            $desktopImage = $this->storeUploadedFile($request, "hero_slides.$index.desktop_image_file", 'homepage', $desktopImage);
+            $mobileImage = $this->storeUploadedFile($request, "hero_slides.$index.mobile_image_file", 'homepage', $mobileImage);
 
             $slides[] = array_filter([
                 'display_order' => isset($slide['display_order']) ? (int) $slide['display_order'] : ($index + 1),
@@ -381,8 +398,8 @@ class HomepageSectionController extends Controller
             'doctor_cards.*.profile_url' => ['nullable', 'string', 'max:255'],
             'doctor_cards.*.appointment_url' => ['nullable', 'string', 'max:255'],
             'doctor_cards.*.call_url' => ['nullable', 'string', 'max:255'],
-            'doctor_cards.*.desktop_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
-            'doctor_cards.*.mobile_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
+            'doctor_cards.*.desktop_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
+            'doctor_cards.*.mobile_image_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
             'doctor_cards.*.desktop_image_path' => ['nullable', 'string', 'max:255'],
             'doctor_cards.*.mobile_image_path' => ['nullable', 'string', 'max:255'],
         ]);
@@ -641,6 +658,13 @@ class HomepageSectionController extends Controller
         return $file->store($directory, 'public');
     }
 
+    private function deleteStoredFile(?string $path): void
+    {
+        if ($path) {
+            Storage::disk('public')->delete($path);
+        }
+    }
+
     private function validateSection(Request $request): array
     {
         return $request->validate([
@@ -666,10 +690,10 @@ class HomepageSectionController extends Controller
             'carousel_speed' => ['nullable', 'integer', 'min:500', 'max:20000'],
             'display_limit' => ['nullable', 'integer', 'min:1', 'max:50'],
             'preview_enabled' => ['nullable', 'boolean'],
-            'background_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
-            'desktop_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
-            'mobile_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
-            'accent_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
+            'background_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
+            'desktop_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
+            'mobile_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
+            'accent_image_path' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:'.self::IMAGE_MAX_KB],
         ]);
     }
 

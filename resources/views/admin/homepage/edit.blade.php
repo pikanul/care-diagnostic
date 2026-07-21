@@ -543,7 +543,7 @@
                 ])
             </div>
         @elseif ($section->section_key === 'hero-slider')
-            <form class="panel builder-panel" method="POST" action="{{ route('admin.homepage.update', $section) }}" enctype="multipart/form-data" data-hero-form>
+            <form class="panel builder-panel" method="POST" action="{{ route('admin.homepage.update', $section) }}" enctype="multipart/form-data" data-hero-form data-upload-limit-mb="20">
                 @csrf
                 @method('PUT')
 
@@ -590,7 +590,7 @@
 
                 <div class="subpanel">
                     <h3>Slides</h3>
-                    <p class="muted-hint">Upload, edit, or remove desktop and mobile hero images. Schedule publish and expiry dates to control visibility.</p>
+                    <p class="muted-hint">Upload, edit, or remove desktop and mobile hero images. Image files can be up to 20 MB each. Keep title fields blank when you want an image-only hero.</p>
 
                     <div class="slide-builder" data-slide-builder>
                         @foreach ($heroSlides as $index => $slide)
@@ -624,10 +624,10 @@
                                         <input type="number" name="hero_slides[{{ $index }}][overlay_opacity]" value="{{ old("hero_slides.$index.overlay_opacity", $slide['overlay_opacity'] ?? ($heroData['overlay_opacity'] ?? 60)) }}" min="0" max="100">
                                     </label>
                                     <label class="full">Title (English)
-                                        <input type="text" name="hero_slides[{{ $index }}][title_en]" value="{{ old("hero_slides.$index.title_en", $slide['title_en'] ?? '') }}" required>
+                                        <input type="text" name="hero_slides[{{ $index }}][title_en]" value="{{ old("hero_slides.$index.title_en", $slide['title_en'] ?? '') }}">
                                     </label>
                                     <label class="full">Title (Bangla)
-                                        <input type="text" name="hero_slides[{{ $index }}][title_bn]" value="{{ old("hero_slides.$index.title_bn", $slide['title_bn'] ?? '') }}" required>
+                                        <input type="text" name="hero_slides[{{ $index }}][title_bn]" value="{{ old("hero_slides.$index.title_bn", $slide['title_bn'] ?? '') }}">
                                     </label>
                                     <label class="full">Subtitle (English)
                                         <textarea name="hero_slides[{{ $index }}][subtitle_en]" rows="2">{{ old("hero_slides.$index.subtitle_en", $slide['subtitle_en'] ?? '') }}</textarea>
@@ -658,6 +658,7 @@
                                         <input type="hidden" name="hero_slides[{{ $index }}][desktop_image_path]" value="{{ $slide['desktop_image_path'] ?? '' }}">
                                         @if (! empty($slide['desktop_image_path']))
                                             <div class="slide-preview"><img src="{{ asset('storage/'.$slide['desktop_image_path']) }}" alt="Desktop slide image"></div>
+                                            <label class="check"><input type="checkbox" name="hero_slides[{{ $index }}][remove_desktop_image]" value="1"> Delete current desktop image</label>
                                         @endif
                                     </label>
                                     <label>Mobile Image
@@ -665,6 +666,7 @@
                                         <input type="hidden" name="hero_slides[{{ $index }}][mobile_image_path]" value="{{ $slide['mobile_image_path'] ?? '' }}">
                                         @if (! empty($slide['mobile_image_path']))
                                             <div class="slide-preview"><img src="{{ asset('storage/'.$slide['mobile_image_path']) }}" alt="Mobile slide image"></div>
+                                            <label class="check"><input type="checkbox" name="hero_slides[{{ $index }}][remove_mobile_image]" value="1"> Delete current mobile image</label>
                                         @endif
                                     </label>
                                 </div>
@@ -703,10 +705,10 @@
                                     <input type="number" name="hero_slides[__INDEX__][overlay_opacity]" value="{{ $heroData['overlay_opacity'] ?? 60 }}" min="0" max="100">
                                 </label>
                                 <label class="full">Title (English)
-                                    <input type="text" name="hero_slides[__INDEX__][title_en]" required>
+                                    <input type="text" name="hero_slides[__INDEX__][title_en]">
                                 </label>
                                 <label class="full">Title (Bangla)
-                                    <input type="text" name="hero_slides[__INDEX__][title_bn]" required>
+                                    <input type="text" name="hero_slides[__INDEX__][title_bn]">
                                 </label>
                                 <label class="full">Subtitle (English)
                                     <textarea name="hero_slides[__INDEX__][subtitle_en]" rows="2"></textarea>
@@ -975,6 +977,9 @@
                     return;
                 }
 
+                const form = document.querySelector('[data-hero-form]');
+                const maxUploadMb = Number(form?.dataset.uploadLimitMb || 20);
+                const maxUploadBytes = maxUploadMb * 1024 * 1024;
                 const nextIndex = () => builder.querySelectorAll('[data-slide-card]').length;
 
                 const refresh = () => {
@@ -1012,6 +1017,20 @@
                         card.remove();
                         refresh();
                     }
+                });
+
+                form?.addEventListener('submit', (event) => {
+                    const oversized = Array.from(form.querySelectorAll('input[type="file"]')).find((field) => {
+                        return field.files && field.files[0] && field.files[0].size > maxUploadBytes;
+                    });
+
+                    if (! oversized) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    oversized.focus();
+                    alert(`"${oversized.files[0].name}" is too large. Please upload an image up to ${maxUploadMb} MB.`);
                 });
             })();
         </script>
