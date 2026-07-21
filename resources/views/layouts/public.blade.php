@@ -587,8 +587,9 @@
         .footer-inner {
             padding: 36px 0 18px;
             display: grid;
-            grid-template-columns: 1.4fr 2fr;
-            gap: 28px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 22px;
+            align-items: start;
         }
 
         .footer-brand {
@@ -597,12 +598,28 @@
         }
 
         .footer-brand img {
-            width: 72px;
-            height: 72px;
+            width: 92px;
+            height: 92px;
             object-fit: contain;
             border-radius: 8px;
             background: #fff;
             padding: 4px;
+        }
+
+        .footer-brand-head {
+            display: grid;
+            gap: 12px;
+        }
+
+        .footer-brand-title {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.18;
+            font-weight: 900;
+        }
+
+        .footer-brand-title span {
+            display: block;
         }
 
         .footer-desc {
@@ -625,9 +642,7 @@
         }
 
         .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px;
+            display: contents;
         }
 
         .footer-section h3 {
@@ -688,11 +703,24 @@
             border-top: 1px solid rgba(255,255,255,0.18);
             background: rgba(2, 33, 73, .24);
             padding: 14px 0 18px;
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
+            display: grid;
+            place-items: center;
+            gap: 8px;
+            text-align: center;
             color: #e7f4ff;
+        }
+
+        .developer-link {
+            color: #fff;
+            font-weight: 900;
+            text-decoration: none;
+            padding: 5px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.14);
+        }
+
+        .developer-link:hover {
+            background: #078b4f;
         }
 
         .footer-social {
