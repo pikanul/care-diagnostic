@@ -1,6 +1,15 @@
 @extends('layouts.admin', ['title' => 'Homepage Builder'])
 
 @section('content')
+    @php
+        $quickSections = [
+            'hero-slider' => 'Hero Image',
+            'specialist-doctors' => 'Specialist Doctors',
+            'diagnostic-test-categories' => 'Accurate Tests, Reliable Results',
+            'main-services' => 'Our Services',
+        ];
+    @endphp
+
     <div class="panel">
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;">
             <div>
@@ -8,6 +17,20 @@
                 <p class="muted">Manage visibility, order, content, media, and preview state for each section.</p>
             </div>
             <button type="submit" form="homepage-order-form">Save Order</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:16px;">
+            @foreach ($quickSections as $sectionKey => $label)
+                @php
+                    $quickSection = $sections->firstWhere('section_key', $sectionKey);
+                @endphp
+                @if ($quickSection)
+                    <a class="button" href="{{ route('admin.homepage.edit', $quickSection) }}" style="justify-content:space-between;">
+                        {{ $label }}
+                        <span aria-hidden="true">Edit</span>
+                    </a>
+                @endif
+            @endforeach
         </div>
 
         <form id="homepage-order-form" method="POST" action="{{ route('admin.homepage.reorder') }}">

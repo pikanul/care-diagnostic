@@ -417,7 +417,7 @@
                 @csrf
                 @method('PUT')
 
-                <h2 style="margin-top:0;">Hero Slider Builder</h2>
+                <h2 style="margin-top:0;">Hero Image Builder</h2>
                 <p class="muted">Slides are sample content until the admin replaces them.</p>
                 <input type="hidden" name="section_type" value="slider">
 
@@ -460,7 +460,7 @@
 
                 <div class="subpanel">
                     <h3>Slides</h3>
-                    <p class="muted-hint">Upload desktop and mobile hero images. Schedule publish and expiry dates to control visibility.</p>
+                    <p class="muted-hint">Upload, edit, or remove desktop and mobile hero images. Schedule publish and expiry dates to control visibility.</p>
 
                     <div class="slide-builder" data-slide-builder>
                         @foreach ($heroSlides as $index => $slide)
@@ -617,7 +617,7 @@
                     <button type="button" class="hero-add" data-add-slide>Add slide</button>
                 </div>
 
-                <button type="submit">Save Hero Slider</button>
+                <button type="submit">Save Hero Image</button>
             </form>
 
             <div class="panel">
