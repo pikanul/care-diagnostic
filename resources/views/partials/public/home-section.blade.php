@@ -488,8 +488,8 @@
                         data-speed="{{ $sliderSpeed }}"
                         style="--doctor-desktop-cards: {{ count($doctors) > 5 ? min($doctorDesktopCards, 5) : $doctorDesktopCards }}; --doctor-mobile-cards: {{ $doctorMobileCards }};">
                         @if ($doctorShowArrows && count($doctors) > 1)
-                            <button type="button" class="doctor-nav doctor-prev" data-doctor-prev aria-label="Previous doctors">Prev</button>
-                            <button type="button" class="doctor-nav doctor-next" data-doctor-next aria-label="Next doctors">Next</button>
+                            <button type="button" class="doctor-nav doctor-prev" data-doctor-prev aria-label="Previous doctors"></button>
+                            <button type="button" class="doctor-nav doctor-next" data-doctor-next aria-label="Next doctors"></button>
                         @endif
                         <div class="doctor-viewport">
                             <div class="doctor-track" data-doctor-track>

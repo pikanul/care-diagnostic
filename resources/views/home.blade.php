@@ -114,9 +114,9 @@
         .doctor-track { display: flex; gap: 16px; min-width: 100%; }
         .doctor-card-item { flex: 0 0 calc((100% - (16px * (var(--doctor-desktop-cards) - 1))) / var(--doctor-desktop-cards)); max-width: 100%; scroll-snap-align: start; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; display: grid; min-width: 0; text-align:center; box-shadow: 0 8px 22px rgba(16,35,61,.04); user-select:none; }
         .doctor-photo { position: relative; background: #fff; padding: 14px 14px 0; display:grid; place-items:center; }
-        .doctor-photo picture { display:block; width:110px; max-width:100%; }
-        .doctor-photo img { display: block; width: 110px; height: 110px; object-fit: cover; border-radius:12px; background:#eef4f8; border:1px solid #dbe7f5; }
-        .doctor-placeholder { width: 110px; height: 110px; border-radius:12px; display: grid; place-items: center; background: radial-gradient(circle at 50% 30%, #fff 0 18%, #dfe9f6 19% 38%, #eef8f4 39% 100%); font-weight: 700; color: transparent; }
+        .doctor-photo picture { display:block; width:min(52%, 150px); max-width:100%; }
+        .doctor-photo img { display: block; width:100%; aspect-ratio:1 / 1; height:auto; object-fit: cover; border-radius:12px; background:#eef4f8; border:1px solid #dbe7f5; }
+        .doctor-placeholder { width:min(52%, 150px); aspect-ratio:1 / 1; border-radius:12px; display: grid; place-items: center; background: radial-gradient(circle at 50% 30%, #fff 0 18%, #dfe9f6 19% 38%, #eef8f4 39% 100%); font-weight: 700; color: transparent; }
         .test-category-grid { display:flex; gap: 16px; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; overscroll-behavior-x:contain; padding:2px 2px 8px; touch-action:pan-y; }
         .test-category-grid::-webkit-scrollbar { display:none; }
         .test-category { flex:0 0 calc((100% - 64px) / 5); min-width:0; scroll-snap-align:start; border:1px solid var(--line); border-radius:10px; padding:16px; background:rgba(255,255,255,.86); box-shadow:0 8px 22px rgba(16,35,61,.04); }
@@ -177,9 +177,13 @@
         .doctor-actions .doctor-book-call { background:linear-gradient(135deg,#004aa5,#0bb7c7); color:#fff; border-color:#0b66c3; box-shadow:0 8px 18px rgba(0,74,165,.18); }
         .doctor-call-number { display:none; color:#0b57bd; font-weight:900; font-size:13px; line-height:1.2; }
         .doctor-card-item.is-number-visible .doctor-call-number { display:block; }
-        .doctor-nav { position: absolute; top: 50%; transform: translateY(-50%); border: 0; border-radius: 999px; width: 42px; height: 42px; background: rgba(255,255,255,.94); box-shadow: 0 8px 24px rgba(16,35,61,.12); z-index: 2; cursor: pointer; }
+        .doctor-nav { position: absolute; top: 50%; transform: translateY(-50%); border: 0; border-radius: 999px; width: 42px; height: 42px; background: rgba(255,255,255,.94); box-shadow: 0 8px 24px rgba(16,35,61,.12); z-index: 2; cursor: pointer; font-size:0; color:#07194a; transition:background .16s ease, transform .16s ease, box-shadow .16s ease; }
+        .doctor-nav::before { display:block; font-size:30px; line-height:1; font-weight:800; }
+        .doctor-nav:hover { background:#fff; transform:translateY(-50%) scale(1.06); box-shadow:0 12px 28px rgba(16,35,61,.18); }
         .doctor-prev { left: 6px; }
+        .doctor-prev::before { content:"‹"; }
         .doctor-next { right: 6px; }
+        .doctor-next::before { content:"›"; }
         .doctor-dots { display: flex; justify-content: center; gap: 8px; }
         .doctor-dots button { width: 10px; height: 10px; border-radius: 999px; border: 0; background: #c9d5ea; }
         .doctor-dots button.is-active { background: var(--accent); }

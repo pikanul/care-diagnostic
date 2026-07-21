@@ -250,7 +250,7 @@ class HomepageBuilder
                     'show_arrows' => true,
                     'show_dots' => false,
                     'loop' => true,
-                    'cards_per_view_desktop' => 6,
+                    'cards_per_view_desktop' => 5,
                     'cards_per_view_mobile' => 1,
                 ],
                 'doctors' => [

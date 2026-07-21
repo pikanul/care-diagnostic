@@ -41,6 +41,10 @@
             min-width: 0;
         }
 
+        .builder-grid-single {
+            grid-template-columns: 1fr;
+        }
+
         .builder-panel {
             display: grid;
             gap: 16px;
@@ -206,7 +210,7 @@
         }
     </style>
 
-    <div class="builder-grid">
+    <div class="builder-grid {{ $section->section_key === 'specialist-doctors' ? 'builder-grid-single' : '' }}">
         @if ($section->section_key === 'physiotherapy-services')
             <form class="panel builder-panel" method="POST" action="{{ route('admin.homepage.update', $section) }}" data-physio-form>
                 @csrf
@@ -534,14 +538,6 @@
 
                 <button type="submit">Save Doctors Section</button>
             </form>
-
-            <div class="panel builder-preview">
-                <h2 style="margin-top:0;">Preview</h2>
-                @include('partials.public.home-section', [
-                    'section' => $section,
-                    'preview' => true,
-                ])
-            </div>
         @elseif ($section->section_key === 'hero-slider')
             <form class="panel builder-panel" method="POST" action="{{ route('admin.homepage.update', $section) }}" enctype="multipart/form-data" data-hero-form data-upload-limit-mb="20">
                 @csrf
