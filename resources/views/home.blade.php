@@ -33,7 +33,7 @@
         .card-item, .stats-item, .point-item, .action-item { border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 16px; min-width: 0; box-shadow: 0 8px 22px rgba(16,35,61,.04); }
         .muted-text { color: var(--muted); overflow-wrap: anywhere; }
         .hero-shell { display: grid; gap: 16px; }
-        .hero-slider { position: relative; height: clamp(720px, 51vw, 915px); outline: none; background: #eaf6ff; overflow:hidden; }
+        .hero-slider { position: relative; width:100vw; height:min(56.25vw, calc(100vh - 128px)); min-height:520px; outline: none; background: #eaf6ff; overflow:hidden; }
         .hero-slider::before { display:none; }
         .hero-stage { position: relative; height: 100%; overflow: hidden; border-radius: 0; background: transparent; z-index:2; }
         .hero-slide { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr; gap: 0; opacity: 0; pointer-events: none; transition: opacity .35s ease, transform .35s ease; transform: translateX(10px); width: 100%; margin: 0; left: 0; right: 0; }
@@ -42,7 +42,7 @@
         .hero-bg { position:absolute; inset:0; z-index:0; }
         .hero-bg picture,
         .hero-bg img { width:100%; height:100%; display:block; }
-        .hero-bg img { object-fit:cover; object-position:center center; transform:scale(1.045); transform-origin:left center; }
+        .hero-bg img { object-fit:cover; object-position:center center; transform:none; transform-origin:center center; }
         .hero-copy { display: grid; align-content: start; gap: 20px; width:min(1680px, calc(100% - 104px)); margin:0 auto; padding: 96px 0 210px; color: #07194a; text-align: var(--hero-text-align, left); background: transparent; position:relative; z-index:3; }
         .hero-copy .section-title { margin:0; color: #082352 !important; font-size: clamp(44px, 4.72vw, 78px); max-width: 830px; line-height:1.08; letter-spacing:0; font-weight:900; overflow-wrap:normal; }
         .hero-title-accent { display:block; color:#075fc7; }
@@ -187,7 +187,7 @@
             .test-category { border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 12px; }
             .test-category:last-child { border-bottom: 0; }
             .physio-services-grid { grid-template-columns: repeat(var(--physio-tablet-columns), minmax(0, 1fr)); }
-            .hero-slider { height:auto; min-height: 0; }
+            .hero-slider { width:100%; height:auto; min-height: 0; }
             .hero-stage { height:auto; min-height: 0; }
             .hero-slider::before { background:linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.64)); }
             .hero-slide { position: relative; grid-template-columns: 1fr; opacity: 1; pointer-events: auto; transform: none; margin-bottom: 14px; width:100%; min-height:720px; }
