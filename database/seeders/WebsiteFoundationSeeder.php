@@ -148,8 +148,8 @@ class WebsiteFoundationSeeder extends Seeder
                 'is_active' => true,
                 'links' => [
                     ['label_en' => 'Alhaj Mojibur Rahman Bhuiyan Complex, Hospital Road, Katiadi, Kishoreganj.', 'label_bn' => 'আলহাজ মজিবুর রহমান ভূঁইয়া কমপ্লেক্স, হাসপাতাল রোড, কটিয়াদী, কিশোরগঞ্জ।', 'url' => 'https://www.google.com/maps/search/?api=1&query=Alhaj%20Mojibur%20Rahman%20Bhuiyan%20Complex%2C%20Hospital%20Road%2C%20Katiadi%2C%20Kishoreganj', 'display_order' => 0],
-                    ['label_en' => '+880 1777-XXX XXX', 'label_bn' => '+৮৮০ ১৭৭৭-XXX XXX', 'url' => 'tel:+8801777XXXXXX', 'display_order' => 1],
-                    ['label_en' => 'care.diagnostic.center@gmail.com', 'label_bn' => 'care.diagnostic.center@gmail.com', 'url' => 'mailto:care.diagnostic.center@gmail.com', 'display_order' => 2],
+                    ['label_en' => '01734762211', 'label_bn' => '০১৭৩৪৭৬২২১১', 'url' => 'tel:01734762211', 'display_order' => 1],
+                    ['label_en' => 'info@carediagnostickatiadi.com', 'label_bn' => 'info@carediagnostickatiadi.com', 'url' => 'mailto:info@carediagnostickatiadi.com', 'display_order' => 2],
                 ],
             ],
             'newsletter' => [

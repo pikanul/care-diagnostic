@@ -4,6 +4,17 @@
     $footerText = $isBangla ? ($siteSettings?->footer_description_bn ?: $siteSettings?->footer_description_en) : ($siteSettings?->footer_description_en ?: $siteSettings?->footer_description_bn);
     $copyrightText = $isBangla ? ($siteSettings?->copyright_text_bn ?: $siteSettings?->copyright_text_en) : ($siteSettings?->copyright_text_en ?: $siteSettings?->copyright_text_bn);
     $socialLinks = $siteSettings?->social_links ?? [];
+    $footerAddress = $isBangla ? ($siteSettings?->address_bn ?: $siteSettings?->address_en) : ($siteSettings?->address_en ?: $siteSettings?->address_bn);
+    $mapSource = trim((string) ($siteSettings?->google_map_embed ?? ''));
+    $mapUrl = $footerAddress ? 'https://www.google.com/maps/search/?api=1&query='.rawurlencode($footerAddress) : null;
+
+    if ($mapSource !== '') {
+        if (preg_match('~src=["\']([^"\']+)["\']~i', $mapSource, $mapMatch)) {
+            $mapUrl = $mapMatch[1];
+        } elseif (preg_match('~^https?://~i', $mapSource)) {
+            $mapUrl = $mapSource;
+        }
+    }
 
     $localizedLink = function (string $url) use ($locale): string {
         if (preg_match('~^/(en|bn)(/|#|$)~', $url)) {
@@ -23,8 +34,10 @@
                 @endif
                 <div>
                     <h2 style="margin:0 0 6px;font-size:22px;">{{ $siteSettings?->{'hospital_name_'.$locale} ?? config('app.name') }}</h2>
-                    @if ($siteSettings?->address_en || $siteSettings?->address_bn)
-                        <div class="footer-desc">{{ $isBangla ? ($siteSettings->address_bn ?: $siteSettings->address_en) : $siteSettings->address_en }}</div>
+                    @if ($footerAddress && $mapUrl)
+                        <a class="footer-address-link" href="{{ $mapUrl }}" target="_blank" rel="noopener">{{ $footerAddress }}</a>
+                    @elseif ($footerAddress)
+                        <div class="footer-desc">{{ $footerAddress }}</div>
                     @endif
                 </div>
             </div>
