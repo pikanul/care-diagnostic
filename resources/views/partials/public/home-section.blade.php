@@ -301,7 +301,10 @@
                             @if (! empty($quickData['actions']))
                                 <div class="quick-panel">
                                     @foreach (array_slice($quickData['actions'], 0, 4) as $action)
-                                        <a href="{{ $localizedUrl($action['url'] ?? '#') }}">
+                                        @php
+                                            $quickTitle = $isBn ? ($action['title_bn'] ?? $action['title_en'] ?? '') : ($action['title_en'] ?? $action['title_bn'] ?? '');
+                                        @endphp
+                                        <a href="{{ $localizedUrl($action['url'] ?? '#') }}" data-quick-action aria-label="{{ $quickTitle }}">
                                             <span class="icon-ring" aria-hidden="true">
                                                 <svg viewBox="0 0 64 64">
                                                     @switch($loop->index)
@@ -330,7 +333,7 @@
                                                 </svg>
                                             </span>
                                             <span>
-                                                <strong>{{ $isBn ? ($action['title_bn'] ?? $action['title_en'] ?? '') : ($action['title_en'] ?? $action['title_bn'] ?? '') }}</strong>
+                                                <strong>{{ $quickTitle }}</strong>
                                                 @if (! empty($action['subtitle_en']) || ! empty($action['subtitle_bn']))
                                                     <span class="quick-subtitle">{{ $isBn ? ($action['subtitle_bn'] ?? $action['subtitle_en'] ?? '') : ($action['subtitle_en'] ?? $action['subtitle_bn'] ?? '') }}</span>
                                                 @endif
