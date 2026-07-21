@@ -78,6 +78,7 @@
             --accent-dark: #003f95;
             --accent-cyan: #0bb7c7;
             --danger: #b42318;
+            --topbar-height: 42px;
             --header-height: 96px;
         }
 
@@ -147,11 +148,23 @@
         }
 
         .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 41;
             background: linear-gradient(135deg, #b7d8f0 0%, #8bbde0 52%, #d8edf9 100%);
             color: #073363;
             font-size: 14px;
             font-weight: 700;
             border-bottom: 1px solid rgba(255,255,255,.58);
+            transition: transform .24s ease, opacity .24s ease;
+            will-change: transform;
+        }
+
+        body.topbar-hidden .topbar {
+            opacity: 0;
+            transform: translateY(calc(-1 * var(--topbar-height)));
         }
 
         .topbar-inner {
@@ -247,7 +260,7 @@
 
         .header {
             position: fixed;
-            top: 0;
+            top: var(--topbar-height);
             left: 0;
             right: 0;
             z-index: 40;
@@ -258,6 +271,11 @@
             border-bottom: 1px solid rgba(126,177,213,.5);
             box-shadow: 0 12px 26px rgba(35, 96, 144, .12);
             overflow: hidden;
+            transition: top .24s ease;
+        }
+
+        body.topbar-hidden .header {
+            top: 0;
         }
 
         .header::after {
@@ -476,7 +494,7 @@
         }
 
         .content {
-            padding-top: var(--header-height);
+            padding-top: calc(var(--topbar-height) + var(--header-height));
             min-height: 36vh;
         }
 
@@ -708,6 +726,12 @@
             gap: 8px;
             text-align: center;
             color: #e7f4ff;
+        }
+
+        .footer-bottom > span {
+            max-width: 100%;
+            white-space: nowrap;
+            font-size: clamp(10px, 2vw, 14px);
         }
 
         .developer-link {
@@ -1012,6 +1036,21 @@
         const menu = document.querySelector('[data-menu-panel]');
         const phoneModal = document.querySelector('[data-phone-modal]');
         const phoneModalClose = document.querySelector('[data-phone-modal-close]');
+        const topbar = document.querySelector('.topbar');
+
+        const updateTopbarState = () => {
+            if (! topbar) {
+                document.documentElement.style.setProperty('--topbar-height', '0px');
+                return;
+            }
+
+            document.documentElement.style.setProperty('--topbar-height', `${topbar.offsetHeight}px`);
+            document.body.classList.toggle('topbar-hidden', window.scrollY > 8);
+        };
+
+        updateTopbarState();
+        window.addEventListener('scroll', updateTopbarState, { passive: true });
+        window.addEventListener('resize', updateTopbarState);
 
         const openPhoneModal = () => {
             if (! phoneModal) {
