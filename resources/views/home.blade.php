@@ -33,7 +33,7 @@
         .card-item, .stats-item, .point-item, .action-item { border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 16px; min-width: 0; box-shadow: 0 8px 22px rgba(16,35,61,.04); }
         .muted-text { color: var(--muted); overflow-wrap: anywhere; }
         .hero-shell { display: grid; gap: 16px; }
-        .hero-slider { position: relative; width:100vw; height:min(56.25vw, calc(100vh - 128px)); min-height:520px; outline: none; background: #eaf6ff; overflow:hidden; }
+        .hero-slider { position: relative; width:100vw; height:calc(100vh - var(--header-height)); min-height:680px; outline: none; background: #eaf6ff; overflow:hidden; }
         .hero-slider::before { display:none; }
         .hero-stage { position: relative; height: 100%; overflow: hidden; border-radius: 0; background: transparent; z-index:2; }
         .hero-slide { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr; gap: 0; opacity: 0; pointer-events: none; transition: opacity .35s ease, transform .35s ease; transform: translateX(10px); width: 100%; margin: 0; left: 0; right: 0; }
@@ -44,7 +44,7 @@
         .hero-bg img,
         .hero-bg video { width:100%; height:100%; display:block; }
         .hero-bg img,
-        .hero-bg video { object-fit:contain; object-position:center center; transform:none; transform-origin:center center; background:#eaf6ff; }
+        .hero-bg video { object-fit:cover; object-position:center center; transform:none; transform-origin:center center; background:#eaf6ff; }
         .hero-bg video { border:0; outline:0; }
         .hero-copy { display: grid; align-content: start; gap: 20px; width:min(1680px, calc(100% - 104px)); margin:0 auto; padding: 96px 0 210px; color: #07194a; text-align: var(--hero-text-align, left); background: transparent; position:relative; z-index:3; }
         .hero-copy .section-title { margin:0; color: #082352 !important; font-size: clamp(44px, 4.72vw, 78px); max-width: 830px; line-height:1.08; letter-spacing:0; font-weight:900; overflow-wrap:normal; }
@@ -83,7 +83,7 @@
             0% { opacity:.84; transform:translate(-50%, -50%) scale(.35); }
             100% { opacity:0; transform:translate(-50%, -50%) scale(1.35); }
         }
-        .hero-indicators { position:absolute; left:50%; bottom:18px; z-index:8; display:flex; gap:9px; justify-content:center; padding:8px 10px; border-radius:999px; background:rgba(255,255,255,.66); box-shadow:0 12px 28px rgba(0,38,88,.18); transform:translateX(-50%); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+        .hero-indicators { position:absolute; left:50%; bottom:112px; z-index:8; display:flex; gap:9px; justify-content:center; padding:8px 10px; border-radius:999px; background:rgba(255,255,255,.72); box-shadow:0 12px 28px rgba(0,38,88,.18); transform:translateX(-50%); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
         .hero-indicators button { width: 11px; height: 11px; border-radius: 999px; border: 0; background: #8fa6c8; cursor: pointer; box-shadow:0 4px 10px rgba(0,38,88,.18); transition:width .2s ease, background .2s ease, transform .2s ease; }
         .hero-indicators button.is-active { width:26px; background: var(--accent); transform:scale(1.04); }
         .highlight-strip { display:grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap:0; padding:18px 20px; color:#fff; background:linear-gradient(135deg,#004aa5,#0571bd); border:1px solid #0b66c3; border-radius:12px; min-width: 0; }
@@ -232,8 +232,9 @@
             .hero-stage { height:auto; min-height: 0; }
             .hero-slider::before { background:linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.64)); }
             .hero-slide { position: relative; grid-template-columns: 1fr; opacity: 1; pointer-events: auto; transform: none; margin-bottom: 14px; width:100%; min-height:720px; }
-            .hero-bg img { object-position: 62% center; transform:none; }
+            .hero-bg img, .hero-bg video { object-fit:contain; object-position: 62% center; transform:none; }
             .quick-panel { position:static; right:auto; bottom:auto; width:min(100% - 24px, 1180px); grid-template-columns:1fr 1fr; margin:0 auto 14px; border-radius:16px; background:rgba(255,255,255,.72); }
+            .hero-indicators { bottom:18px; }
             .quick-panel a { min-height:82px; padding:14px; border-right:0; border-bottom:1px solid rgba(11,102,195,.14); }
             .hero-trust-row { grid-template-columns:1fr 1fr; }
             .hero-media { min-height: 300px; padding: 0 12px 0; order:-1; }
