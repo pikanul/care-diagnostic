@@ -679,7 +679,7 @@
                         </div>
                         <div class="cta-actions" style="display:flex;gap:10px;flex-wrap:wrap;">
                             @if ($secondaryLabel && $secondaryUrl)
-                                <a class="action-link" href="{{ $localizedUrl($secondaryUrl) }}">{{ $secondaryLabel }}</a>
+                                <a class="action-link" href="{{ $localizedUrl($secondaryUrl) }}" @if ($section->section_key === 'appointment-cta') data-phone-popup-trigger @endif>{{ $secondaryLabel }}</a>
                             @endif
                             @if ($section->section_key !== 'appointment-cta' && $primaryLabel && $primaryUrl)
                                 <a class="action-link primary" href="{{ $localizedUrl($primaryUrl) }}">{{ $primaryLabel }}</a>

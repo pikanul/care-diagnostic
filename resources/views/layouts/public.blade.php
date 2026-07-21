@@ -516,6 +516,94 @@
             min-width: 0;
         }
 
+        .phone-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 90;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(5, 23, 54, .48);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .phone-modal.is-open {
+            display: flex;
+        }
+
+        .phone-modal-card {
+            width: min(100%, 430px);
+            border: 1px solid rgba(255,255,255,.62);
+            border-radius: 18px;
+            padding: 20px;
+            background: rgba(255,255,255,.88);
+            box-shadow: 0 24px 70px rgba(5, 35, 82, .24);
+            color: var(--text);
+        }
+
+        .phone-modal-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .phone-modal-head h2 {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.2;
+        }
+
+        .phone-modal-close {
+            width: 38px;
+            height: 38px;
+            border-radius: 999px;
+            padding: 0;
+            background: #e7eef8;
+            color: #0b2b60;
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .phone-modal-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .phone-modal-list a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            min-height: 54px;
+            border: 1px solid rgba(11,102,195,.18);
+            border-radius: 13px;
+            padding: 0 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #eef8ff 100%);
+            color: #08306f;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 900;
+            box-shadow: 0 10px 24px rgba(11,102,195,.08);
+        }
+
+        .phone-modal-list a::after {
+            content: "Call";
+            border-radius: 999px;
+            padding: 6px 10px;
+            background: #079455;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        html[lang="bn"] .phone-modal-list a::after {
+            content: "কল";
+        }
+
         .footer {
             margin-top: 48px;
             background:
@@ -897,14 +985,72 @@
     @endphp
 
     <nav class="mobile-action-bar" aria-label="{{ $currentLocale === 'bn' ? 'দ্রুত মোবাইল অ্যাকশন' : 'Mobile quick actions' }}">
-        <a class="danger" href="{{ $mobileCallUrl }}">{{ $currentLocale === 'bn' ? 'কল' : 'Call' }}</a>
-        <a class="primary" href="{{ $mobileAppointmentUrl }}">{{ $currentLocale === 'bn' ? 'অ্যাপয়েন্টমেন্ট' : 'Appointment' }}</a>
+        <a class="danger" href="{{ $mobileCallUrl }}" data-phone-popup-trigger>{{ $currentLocale === 'bn' ? 'কল' : 'Call' }}</a>
+        <a class="primary" href="{{ $mobileAppointmentUrl }}" data-phone-popup-trigger>{{ $currentLocale === 'bn' ? 'অ্যাপয়েন্টমেন্ট' : 'Appointment' }}</a>
         <a href="{{ $mobileSampleUrl }}">{{ $currentLocale === 'bn' ? 'হোম স্যাম্পল' : 'Home sample' }}</a>
     </nav>
+
+    <div class="phone-modal" data-phone-modal aria-hidden="true">
+        <div class="phone-modal-card" role="dialog" aria-modal="true" aria-labelledby="phone-modal-title">
+            <div class="phone-modal-head">
+                <div>
+                    <h2 id="phone-modal-title">{{ $currentLocale === 'bn' ? 'কল করুন' : 'Call Us Now' }}</h2>
+                    <p class="muted-text" style="margin:6px 0 0;">{{ $currentLocale === 'bn' ? 'নম্বর নির্বাচন করুন' : 'Choose a number to call directly' }}</p>
+                </div>
+                <button class="phone-modal-close" type="button" data-phone-modal-close aria-label="{{ $currentLocale === 'bn' ? 'বন্ধ করুন' : 'Close' }}">×</button>
+            </div>
+            <div class="phone-modal-list">
+                <a href="tel:01734762211">01734762211</a>
+                <a href="tel:01958404940">01958404940</a>
+                <a href="tel:01730961359">01730961359</a>
+            </div>
+        </div>
+    </div>
 
     <script>
         const toggle = document.querySelector('[data-menu-toggle]');
         const menu = document.querySelector('[data-menu-panel]');
+        const phoneModal = document.querySelector('[data-phone-modal]');
+        const phoneModalClose = document.querySelector('[data-phone-modal-close]');
+
+        const openPhoneModal = () => {
+            if (! phoneModal) {
+                return;
+            }
+
+            phoneModal.classList.add('is-open');
+            phoneModal.setAttribute('aria-hidden', 'false');
+            phoneModalClose?.focus();
+        };
+
+        const closePhoneModal = () => {
+            if (! phoneModal) {
+                return;
+            }
+
+            phoneModal.classList.remove('is-open');
+            phoneModal.setAttribute('aria-hidden', 'true');
+        };
+
+        document.querySelectorAll('[data-phone-popup-trigger]').forEach((link) => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                openPhoneModal();
+            });
+        });
+
+        phoneModalClose?.addEventListener('click', closePhoneModal);
+        phoneModal?.addEventListener('click', (event) => {
+            if (event.target === phoneModal) {
+                closePhoneModal();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closePhoneModal();
+            }
+        });
 
         if (toggle && menu) {
             toggle.addEventListener('click', () => {

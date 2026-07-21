@@ -111,7 +111,7 @@
             <div class="header-actions">
                 @if ($siteSettings?->contact_buttons_visible)
                     @if ($siteSettings?->book_appointment_button_url)
-                        <a class="action-link primary" href="{{ $menuUrl($siteSettings->book_appointment_button_url) }}">
+                        <a class="action-link primary" href="{{ $menuUrl($siteSettings->book_appointment_button_url) }}" data-phone-popup-trigger>
                             <span aria-hidden="true">▣</span>
                             {{ $isBangla ? ($siteSettings->book_appointment_button_label_bn ?: $siteSettings->book_appointment_button_label_en) : $siteSettings->book_appointment_button_label_en }}
                         </a>
