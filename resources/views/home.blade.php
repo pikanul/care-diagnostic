@@ -228,13 +228,14 @@
             .test-category { flex-basis:100%; }
             .test-modal-body { grid-template-columns:1fr; }
             .physio-services-grid { grid-template-columns: repeat(var(--physio-tablet-columns), minmax(0, 1fr)); }
-            .hero-slider { width:100%; height:auto; min-height: 0; }
-            .hero-stage { height:auto; min-height: 0; }
+            .hero-slider { width:100%; height:calc(100vh - var(--header-height)); min-height:560px; }
+            .hero-stage { height:100%; min-height: 0; }
             .hero-slider::before { background:linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.64)); }
-            .hero-slide { position: relative; grid-template-columns: 1fr; opacity: 1; pointer-events: auto; transform: none; margin-bottom: 14px; width:100%; min-height:720px; }
-            .hero-bg img, .hero-bg video { object-fit:contain; object-position: 62% center; transform:none; }
-            .quick-panel { position:static; right:auto; bottom:auto; width:min(100% - 24px, 1180px); grid-template-columns:1fr 1fr; margin:0 auto 14px; border-radius:16px; background:rgba(255,255,255,.72); }
-            .hero-indicators { bottom:18px; }
+            .hero-slide { position: absolute; inset:0; grid-template-columns: 1fr; opacity: 0; pointer-events: none; transform: translateX(10px); margin-bottom: 0; width:100%; min-height:0; }
+            .hero-slide.is-active { opacity: 1; pointer-events: auto; transform: translateX(0); }
+            .hero-bg img, .hero-bg video { object-fit:cover; object-position: center center; transform:none; }
+            .quick-panel { position:absolute; right:12px; bottom:18px; width:min(100% - 24px, 1180px); grid-template-columns:1fr 1fr; margin:0; border-radius:16px; background:rgba(255,255,255,.72); }
+            .hero-indicators { bottom:182px; }
             .quick-panel a { min-height:82px; padding:14px; border-right:0; border-bottom:1px solid rgba(11,102,195,.14); }
             .hero-trust-row { grid-template-columns:1fr 1fr; }
             .hero-media { min-height: 300px; padding: 0 12px 0; order:-1; }
@@ -255,7 +256,7 @@
             .section-inner { padding: 14px; }
             .section-title { font-size: 23px; }
             .section-subtitle { font-size: 15px; }
-            .hero-slide { min-height:760px; }
+            .hero-slider { min-height:520px; }
             .hero-bg img { object-position: 65% center; transform:none; }
             .hero-copy { padding: 28px 0 18px; }
             .hero-copy .section-title { font-size: 30px; }
