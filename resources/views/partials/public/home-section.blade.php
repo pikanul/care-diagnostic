@@ -633,35 +633,27 @@
                     @php
                         $facilitySection = $sectionByKey('facility-showcase');
                         $facilityData = is_array($facilitySection?->section_data) ? $facilitySection->section_data : [];
-                        $sampleSection = $sectionByKey('home-sample-collection');
-                        $sampleData = is_array($sampleSection?->section_data) ? $sampleSection->section_data : [];
-                        $sampleTitle = $isBn ? ($sampleSection?->title_bn ?: $sampleSection?->section_label_bn) : ($sampleSection?->title_en ?: $sampleSection?->section_label_en);
-                        $sampleContent = $isBn ? $sampleSection?->content_bn : $sampleSection?->content_en;
                     @endphp
-                    <div class="section-head">
-                        <div>
-                            <div class="section-kicker">{{ $section->section_label_en }}</div>
-                            <h2 class="section-title">{{ $title }}</h2>
-                            <p class="section-subtitle">{{ $summary ?: $content }}</p>
-                        </div>
-                    </div>
                     <div class="why-layout">
                         <div class="why-panel">
-                            <h3 style="margin:0 0 8px;font-size:22px;">{{ $title }}</h3>
-                            <p class="muted-text">{{ $subtitle }}</p>
+                            <div class="section-kicker">{{ $isBn ? $section->section_label_bn : $section->section_label_en }}</div>
+                            <h3>{{ $title }}</h3>
+                            <p class="muted-text">{{ $summary ?: $content ?: $subtitle }}</p>
                             <ul>
                                 @foreach ($points as $point)
                                     <li>{{ $isBn ? ($point['title_bn'] ?? $point['title_en']) : $point['title_en'] }}</li>
                                 @endforeach
                             </ul>
                         </div>
-                        <div class="why-stats-grid">
-                            @foreach (($data['stats'] ?? []) as $stat)
-                                <div class="why-stat">
-                                    <strong>{{ $stat['value'] ?? '' }}</strong>
-                                    <span>{{ $isBn ? ($stat['title_bn'] ?? $stat['title_en'] ?? '') : ($stat['title_en'] ?? $stat['title_bn'] ?? '') }}</span>
-                                </div>
-                            @endforeach
+                        <div class="why-stats-panel">
+                            <div class="why-stats-grid">
+                                @foreach (array_slice(($data['stats'] ?? []), 0, 4) as $stat)
+                                    <div class="why-stat">
+                                        <strong>{{ $stat['value'] ?? '' }}</strong>
+                                        <span>{{ $isBn ? ($stat['title_bn'] ?? $stat['title_en'] ?? '') : ($stat['title_en'] ?? $stat['title_bn'] ?? '') }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                         <div class="why-building">
                             @if (! empty($facilityData['image_path']))
@@ -672,26 +664,6 @@
                                     <span>{{ $isBn ? ($facilityItem['title_bn'] ?? $facilityItem['title_en'] ?? '') : ($facilityItem['title_en'] ?? $facilityItem['title_bn'] ?? '') }}</span>
                                 @endforeach
                             </div>
-                        </div>
-                        <div class="home-sample-card">
-                            <div>
-                                <div class="section-kicker">{{ $sampleSection?->section_label_en }}</div>
-                                <h3 style="margin:6px 0 8px;font-size:26px;color:#07194a;">{{ $sampleTitle }}</h3>
-                                <p class="muted-text" style="text-align:left;">{{ $sampleContent }}</p>
-                                @if (! empty($sampleData['points']))
-                                    <ul style="margin:12px 0;padding-left:18px;line-height:1.7;">
-                                        @foreach (array_slice($sampleData['points'], 0, 3) as $samplePoint)
-                                            <li>{{ $isBn ? ($samplePoint['title_bn'] ?? $samplePoint['title_en'] ?? '') : ($samplePoint['title_en'] ?? $samplePoint['title_bn'] ?? '') }}</li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                                @if (! empty($sampleData['button_label_en']) && ! empty($sampleData['button_url']))
-                                    <a class="action-link primary" href="{{ $localizedUrl($sampleData['button_url']) }}">{{ $isBn ? ($sampleData['button_label_bn'] ?? $sampleData['button_label_en']) : $sampleData['button_label_en'] }}</a>
-                                @endif
-                            </div>
-                            @if (! empty($sampleData['image_path']))
-                                <img src="{{ asset('storage/'.$sampleData['image_path']) }}" alt="{{ $sampleTitle }}" loading="lazy" decoding="async">
-                            @endif
                         </div>
                     </div>
                     @break

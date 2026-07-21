@@ -105,18 +105,31 @@
         .test-category h3 { margin: 0 0 10px; font-size: 16px; }
         .test-category ul { margin: 0; padding-left: 18px; color: var(--text); line-height: 1.8; }
         .section-visual { display:block; width:100%; border-radius:10px; object-fit:cover; max-height:230px; }
-        .why-layout { display:grid; grid-template-columns: 1.05fr .82fr 1.45fr .95fr; gap:18px; align-items:stretch; }
-        .why-panel { padding:18px; border-right:1px solid #e7edf7; }
-        .why-panel ul { list-style:none; padding:0; margin:16px 0 0; display:grid; gap:8px; }
-        .why-panel li { font-size:13px; color:#1a2d55; }
-        .why-panel li::before { content:"✓"; display:inline-grid; place-items:center; width:16px; height:16px; border-radius:999px; margin-right:8px; background:#09944b; color:#fff; font-size:11px; }
-        .why-stats-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; align-content:center; }
-        .why-stat { border-radius:9px; padding:20px 16px; color:#fff; background:#058744; min-height:96px; display:grid; align-content:center; }
-        .why-stat:nth-child(even) { background:#0049b6; }
-        .why-stat strong { font-size:30px; line-height:1; }
-        .why-building { display:grid; gap:10px; }
-        .why-building img { width:100%; height:190px; object-fit:cover; border-radius:10px; }
-        .building-tags { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; font-size:11px; color:#075bd8; text-align:center; }
+        .section-block#why-choose-us { border:0; background:transparent; }
+        .section-block#why-choose-us .section-inner { padding:0; }
+        .why-layout { display:grid; grid-template-columns:minmax(260px,.82fr) minmax(280px,.92fr) minmax(500px,1.7fr); gap:22px; align-items:stretch; }
+        .why-panel,
+        .why-stats-panel,
+        .why-building { border:1px solid #e1e8f2; border-radius:9px; background:#fff; box-shadow:0 10px 24px rgba(16,35,61,.035); min-width:0; }
+        .why-panel { padding:24px 26px; display:grid; align-content:start; }
+        .why-panel h3 { margin:8px 0 10px; color:#07194a; font-size:clamp(25px,2.1vw,34px); line-height:1.08; font-weight:900; letter-spacing:0; overflow-wrap:anywhere; }
+        .why-panel .muted-text { color:#4f678c; font-size:15px; line-height:1.58; text-align:left; }
+        .why-panel ul { list-style:none; padding:0; margin:18px 0 0; display:grid; gap:10px; }
+        .why-panel li { display:grid; grid-template-columns:auto 1fr; align-items:start; gap:10px; font-size:14px; line-height:1.25; color:#1a2d55; min-width:0; }
+        .why-panel li::before { content:"✓"; display:inline-grid; place-items:center; width:17px; height:17px; border-radius:999px; background:#09944b; color:#fff; font-size:11px; font-weight:900; margin-top:1px; }
+        .why-stats-panel { padding:22px; display:grid; align-content:center; }
+        .why-stats-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; align-content:center; }
+        .why-stat { border-radius:6px; padding:22px 20px; color:#fff; background:linear-gradient(135deg,#004aa5,#075fc7); min-height:112px; display:grid; align-content:center; gap:8px; box-shadow:0 10px 18px rgba(0,74,165,.12); }
+        .why-stat:nth-child(even) { background:linear-gradient(135deg,#058744,#12a75b); }
+        .why-stat:nth-child(3) { background:linear-gradient(135deg,#004aa5,#075fc7); }
+        .why-stat:nth-child(4) { background:linear-gradient(135deg,#058744,#12a75b); }
+        .why-stat strong { font-size:30px; line-height:1; font-weight:900; color:#fff; }
+        .why-stat span { font-size:15px; line-height:1.22; color:rgba(255,255,255,.92); font-weight:700; overflow-wrap:anywhere; }
+        .why-building { overflow:hidden; display:grid; grid-template-rows:minmax(210px,1fr) auto; }
+        .why-building img { width:100%; height:100%; min-height:210px; max-height:270px; object-fit:cover; border-radius:0; display:block; }
+        .building-tags { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; padding:18px 20px; background:#fff; border-top:1px solid #e6edf6; }
+        .building-tags span { display:grid; grid-template-columns:auto 1fr; gap:10px; align-items:center; justify-content:center; color:#14346d; font-size:14px; line-height:1.22; font-weight:800; text-align:left; min-width:0; }
+        .building-tags span::before { content:""; width:32px; height:32px; border:2px solid #0b66c3; border-radius:7px; background:linear-gradient(135deg,rgba(11,102,195,.08),rgba(11,183,199,.08)); }
         .home-sample-card { border:1px solid #e2e9f4; border-radius:10px; padding:18px; display:grid; grid-template-columns:1fr auto; gap:12px; overflow:hidden; }
         .home-sample-card img { width:120px; align-self:end; }
         .facility-row { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:0; text-align:center; }
@@ -141,6 +154,10 @@
         .physio-service-card.is-featured { border-color: rgba(15,118,110,.32); box-shadow: 0 10px 24px rgba(15,118,110,.08); }
         .physio-service-card h3 { margin: 8px 0 6px; font-size: 18px; line-height: 1.25; overflow-wrap: anywhere; }
         .physio-icon { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: #ecf8f6; color: var(--accent); font-weight: 800; font-size: 22px; }
+
+        @media (max-width: 1180px) {
+            .why-layout { grid-template-columns: 1fr; }
+        }
 
         @media (max-width: 960px) {
             .cards-2, .cards-3, .cards-4, .stats-grid, .test-category-grid, .highlight-strip, .why-layout, .facility-row { grid-template-columns: 1fr; }
@@ -187,6 +204,14 @@
             .quick-panel strong { font-size:15px; }
             .quick-panel span.quick-subtitle { font-size:13px; margin-top:4px; }
             .home-sample-card { grid-template-columns:1fr; }
+            .why-panel { padding:18px; }
+            .why-stats-panel { padding:16px; }
+            .why-stats-grid { gap:12px; }
+            .why-stat { min-height:92px; padding:16px 14px; }
+            .why-stat strong { font-size:26px; }
+            .why-stat span { font-size:13px; }
+            .building-tags { grid-template-columns:1fr 1fr; padding:12px; gap:10px; }
+            .building-tags span { font-size:12px; }
             .hero-placeholder { min-height: 220px; }
             .hero-media { min-height: 210px; }
             .hero-actions .action-link,
