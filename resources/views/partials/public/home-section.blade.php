@@ -143,9 +143,6 @@
                                 <div class="hero-stage">
                                     @foreach ($slides as $slideIndex => $slide)
                                         @php
-                                            $slideTitle = $isBn ? ($slide['title_bn'] ?? $slide['title_en'] ?? '') : ($slide['title_en'] ?? $slide['title_bn'] ?? '');
-                                            $slideSubtitle = $isBn ? ($slide['subtitle_bn'] ?? $slide['subtitle_en'] ?? '') : ($slide['subtitle_en'] ?? $slide['subtitle_bn'] ?? '');
-                                            $titleParts = str_contains($slideTitle, ',') ? explode(',', $slideTitle, 2) : null;
                                             $alignment = $slide['text_alignment'] ?? $settings['text_alignment'] ?? 'left';
                                             $overlay = (int) ($slide['overlay_opacity'] ?? $settings['overlay_opacity'] ?? 60);
                                             $isLazy = $sliderLazy && $slideIndex > 0;
@@ -153,10 +150,6 @@
                                             $mobileImage = $slide['mobile_image_path'] ?? null;
                                             $videoPath = $slide['video_path'] ?? null;
                                             $videoUrl = $slide['video_url'] ?? null;
-                                            $primaryLabel = $isBn ? ($slide['primary_cta_label_bn'] ?? $slide['primary_cta_label_en'] ?? '') : ($slide['primary_cta_label_en'] ?? $slide['primary_cta_label_bn'] ?? '');
-                                            $secondaryLabel = $isBn ? ($slide['secondary_cta_label_bn'] ?? $slide['secondary_cta_label_en'] ?? '') : ($slide['secondary_cta_label_en'] ?? $slide['secondary_cta_label_bn'] ?? '');
-                                            $primaryUrl = $slide['primary_cta_url'] ?? '';
-                                            $secondaryUrl = $slide['secondary_cta_url'] ?? '';
                                             $videoPoster = $mobileImage ?: $desktopImage;
                                         @endphp
                                         <article class="hero-slide {{ $loop->first ? 'is-active' : '' }}" data-slide data-slide-index="{{ $slideIndex }}" aria-hidden="{{ $loop->first ? 'false' : 'true' }}" style="--hero-overlay: {{ $overlay / 100 }}; --hero-text-align: {{ $alignment }};">
@@ -180,69 +173,6 @@
                                                     </picture>
                                                 </div>
                                             @endif
-
-                                            <div class="hero-copy">
-                                                <span class="hero-badge">{{ $isBn ? 'বিশ্বস্ত স্বাস্থ্যসেবা প্রতিটি পরিবারের জন্য' : 'Trusted Healthcare For Every Family' }}</span>
-                                                <h3 class="section-title">
-                                                    @if ($titleParts)
-                                                        {{ trim($titleParts[0]) }},
-                                                        <span class="hero-title-accent">{{ trim($titleParts[1]) }}</span>
-                                                    @else
-                                                        {{ $slideTitle }}
-                                                    @endif
-                                                </h3>
-                                                @if ($slideSubtitle)
-                                                    <p class="section-subtitle">{{ $slideSubtitle }}</p>
-                                                @endif
-                                                @if (! empty($trustData['items']))
-                                                    <div class="hero-trust-row">
-                                                        @foreach (array_slice($trustData['items'], 0, 4) as $trustItem)
-                                                            <div class="hero-trust-item">
-                                                                <span class="icon-ring" aria-hidden="true">
-                                                                    <svg viewBox="0 0 64 64">
-                                                                        @switch($loop->index)
-                                                                            @case(0)
-                                                                                <circle cx="32" cy="25" r="11" />
-                                                                                <path d="M15 55v-6c0-9 7-15 17-15s17 6 17 15v6" />
-                                                                                <path d="M23 45h18" />
-                                                                                @break
-                                                                            @case(1)
-                                                                                <path d="M32 9 50 17v16c0 11-8 18-18 22-10-4-18-11-18-22V17l18-8Z" />
-                                                                                <path d="M32 23v12" />
-                                                                                <path d="M26 29h12" />
-                                                                                @break
-                                                                            @case(2)
-                                                                                <path d="M18 12h28v40H18z" />
-                                                                                <path d="M24 24h16" />
-                                                                                <path d="M24 41l7-7 5 4 6-10" />
-                                                                                <path d="M24 8v8M40 8v8" />
-                                                                                @break
-                                                                            @default
-                                                                                <path d="M21 54V42c0-5 4-9 9-9h4c5 0 9 4 9 9v12" />
-                                                                                <path d="M24 23c0-6 4-10 8-10s8 4 8 10-4 10-8 10-8-4-8-10Z" />
-                                                                                <path d="M13 38 8 48l8 6 6-13" />
-                                                                                <path d="M51 38l5 10-8 6-6-13" />
-                                                                        @endswitch
-                                                                    </svg>
-                                                                </span>
-                                                                <span>
-                                                                    <strong>{{ $isBn ? ($trustItem['title_bn'] ?? $trustItem['title_en'] ?? '') : ($trustItem['title_en'] ?? $trustItem['title_bn'] ?? '') }}</strong>
-                                                                    <span>{{ $isBn ? ($trustItem['description_bn'] ?? $trustItem['description_en'] ?? '') : ($trustItem['description_en'] ?? $trustItem['description_bn'] ?? '') }}</span>
-                                                                </span>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                @endif
-
-                                                <div class="hero-actions">
-                                                    @if ($primaryLabel && $primaryUrl)
-                                                        <a class="action-link primary" href="{{ $localizedUrl($primaryUrl) }}">{{ $primaryLabel }} <span aria-hidden="true">▣</span></a>
-                                                    @endif
-                                                    @if ($secondaryLabel && $secondaryUrl)
-                                                        <a class="action-link" href="{{ $localizedUrl($secondaryUrl) }}">{{ $secondaryLabel }} <span aria-hidden="true">→</span></a>
-                                                    @endif
-                                                </div>
-                                            </div>
 
                                             @if (($slide['media_type'] ?? 'image') === 'video' || ! $desktopImage)
                                                 <div class="hero-media">

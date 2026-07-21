@@ -34,7 +34,7 @@
         .muted-text { color: var(--muted); overflow-wrap: anywhere; }
         .hero-shell { display: grid; gap: 16px; }
         .hero-slider { position: relative; height: clamp(720px, 51vw, 915px); outline: none; background: #eaf6ff; overflow:hidden; }
-        .hero-slider::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(245,251,255,.94) 0%, rgba(235,247,255,.74) 39%, rgba(220,241,255,.22) 64%, rgba(255,255,255,0) 100%); pointer-events:none; z-index:1; }
+        .hero-slider::before { display:none; }
         .hero-stage { position: relative; height: 100%; overflow: hidden; border-radius: 0; background: transparent; z-index:2; }
         .hero-slide { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr; gap: 0; opacity: 0; pointer-events: none; transition: opacity .35s ease, transform .35s ease; transform: translateX(10px); width: 100%; margin: 0; left: 0; right: 0; }
         .hero-slide.is-active { opacity: 1; pointer-events: auto; }
