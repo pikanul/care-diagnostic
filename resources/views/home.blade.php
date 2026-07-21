@@ -95,12 +95,12 @@
         .stat-value { font-size: 30px; font-weight: 700; color: var(--text); }
         .section-cta { display:flex; justify-content:space-between; gap:20px; align-items:center; padding:22px; background:linear-gradient(135deg,#003678,#0571bd); color:#fff; border-radius:14px; min-width: 0; }
         .section-cta .section-subtitle { color: rgba(255,255,255,.82); }
-        .appointment-cta-card { min-height:96px; padding:14px 18px; gap:16px; border-radius:12px; }
-        .appointment-cta-card .section-kicker { color:#d7ecff; font-size:10px; }
-        .appointment-cta-card .section-title { font-size:clamp(19px,2vw,27px); line-height:1.1; }
-        .appointment-cta-card .section-subtitle { max-width:520px; margin-top:5px; font-size:13px; line-height:1.45; }
+        .appointment-cta-card { min-height:48px; padding:8px 14px; gap:12px; border-radius:10px; }
+        .appointment-cta-card .section-kicker { color:#d7ecff; font-size:9px; line-height:1; }
+        .appointment-cta-card .section-title { font-size:clamp(16px,1.5vw,20px); line-height:1.05; }
+        .appointment-cta-card .section-subtitle { max-width:none; margin-top:3px; font-size:12px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .appointment-cta-card .cta-actions { margin-left:auto; flex:0 0 auto; }
-        .appointment-cta-card .action-link { min-height:52px; padding:0 24px; border-radius:10px; font-size:15px; white-space:nowrap; }
+        .appointment-cta-card .action-link { min-height:38px; padding:0 18px; border-radius:8px; font-size:13px; white-space:nowrap; }
         .hero-placeholder { width: 100%; min-height: 320px; border-radius: 12px; background: radial-gradient(circle at 50% 35%, #ffffff 0 22%, #d7e9fb 23% 42%, #eef8f4 43% 100%); display: grid; place-items: center; font-weight: 700; color: transparent; }
         .sample-note { margin-top: 10px; font-size: 12px; color: var(--muted); }
         .card-image { display:block; width:100%; aspect-ratio: 1.5 / 1; object-fit: cover; border-radius: 8px 8px 0 0; margin: -16px -16px 12px; max-width: calc(100% + 32px); }

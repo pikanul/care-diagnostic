@@ -718,7 +718,7 @@
                                 <a class="action-link primary" href="{{ $localizedUrl($primaryUrl) }}">{{ $primaryLabel }}</a>
                             @endif
                         </div>
-                        @if ($ctaImage)
+                        @if ($ctaImage && $section->section_key !== 'appointment-cta')
                             <div class="cta-image">
                                 <img src="{{ asset('storage/'.$ctaImage) }}" alt="{{ $title }}" loading="lazy" decoding="async">
                             </div>
