@@ -703,7 +703,7 @@
                         $ctaPoints = $data['points'] ?? [];
                         $ctaImage = $data['image_path'] ?? null;
                     @endphp
-                    <div class="section-cta">
+                    <div @class(['section-cta', 'appointment-cta-card' => $section->section_key === 'appointment-cta'])>
                         <div>
                             <div class="section-kicker">{{ $section->section_label_en }}</div>
                             <h2 class="section-title">{{ $title }}</h2>
@@ -716,11 +716,11 @@
                                 </ul>
                             @endif
                         </div>
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <div class="cta-actions" style="display:flex;gap:10px;flex-wrap:wrap;">
                             @if ($secondaryLabel && $secondaryUrl)
                                 <a class="action-link" href="{{ $localizedUrl($secondaryUrl) }}">{{ $secondaryLabel }}</a>
                             @endif
-                            @if ($primaryLabel && $primaryUrl)
+                            @if ($section->section_key !== 'appointment-cta' && $primaryLabel && $primaryUrl)
                                 <a class="action-link primary" href="{{ $localizedUrl($primaryUrl) }}">{{ $primaryLabel }}</a>
                             @endif
                         </div>

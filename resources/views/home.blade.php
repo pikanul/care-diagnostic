@@ -82,6 +82,12 @@
         .stat-value { font-size: 30px; font-weight: 700; color: var(--text); }
         .section-cta { display:flex; justify-content:space-between; gap:20px; align-items:center; padding:22px; background:linear-gradient(135deg,#003678,#0571bd); color:#fff; border-radius:14px; min-width: 0; }
         .section-cta .section-subtitle { color: rgba(255,255,255,.82); }
+        .appointment-cta-card { min-height:96px; padding:14px 18px; gap:16px; border-radius:12px; }
+        .appointment-cta-card .section-kicker { color:#d7ecff; font-size:10px; }
+        .appointment-cta-card .section-title { font-size:clamp(19px,2vw,27px); line-height:1.1; }
+        .appointment-cta-card .section-subtitle { max-width:520px; margin-top:5px; font-size:13px; line-height:1.45; }
+        .appointment-cta-card .cta-actions { margin-left:auto; flex:0 0 auto; }
+        .appointment-cta-card .action-link { min-height:52px; padding:0 24px; border-radius:10px; font-size:15px; white-space:nowrap; }
         .hero-placeholder { width: 100%; min-height: 320px; border-radius: 12px; background: radial-gradient(circle at 50% 35%, #ffffff 0 22%, #d7e9fb 23% 42%, #eef8f4 43% 100%); display: grid; place-items: center; font-weight: 700; color: transparent; }
         .sample-note { margin-top: 10px; font-size: 12px; color: var(--muted); }
         .card-image { display:block; width:100%; aspect-ratio: 1.5 / 1; object-fit: cover; border-radius: 8px 8px 0 0; margin: -16px -16px 12px; max-width: calc(100% + 32px); }
@@ -177,6 +183,7 @@
             .hero-copy { width:min(100% - 32px, 720px); padding: 42px 0 20px; }
             .hero-copy, .hero-media { border-radius: 12px; }
             .highlight-strip, .section-cta, .section-head { flex-direction: column; align-items: flex-start; }
+            .appointment-cta-card .cta-actions { margin-left:0; width:100%; }
             .highlight-item { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.18); padding: 10px 0; }
             .highlight-item:last-child { border-bottom: 0; }
             .cta-image { max-width: 100%; width: 100%; justify-items: center; }
