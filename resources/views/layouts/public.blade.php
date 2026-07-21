@@ -145,10 +145,11 @@
         }
 
         .topbar {
-            background: #003f95;
-            color: #ffffff;
+            background: linear-gradient(135deg, #b7d8f0 0%, #8bbde0 52%, #d8edf9 100%);
+            color: #073363;
             font-size: 17px;
             font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,.58);
         }
 
         .topbar-inner {
@@ -176,7 +177,7 @@
             width: 24px;
             height: 24px;
             margin-right: 10px;
-            border: 2px solid rgba(255,255,255,.9);
+            border: 2px solid rgba(7,51,99,.64);
             border-radius: 999px;
             font-size: 12px;
             line-height: 1;
@@ -194,11 +195,11 @@
             content: "●";
             border: 0;
             font-size: 22px;
-            color: #fff;
+            color: #073363;
         }
 
         .topbar a {
-            color: #ffffff;
+            color: #073363;
             text-decoration: none;
         }
 
@@ -219,20 +220,20 @@
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            color: rgba(255,255,255,.82);
+            color: rgba(7,51,99,.78);
             font-size: 15px;
             font-weight: 700;
             white-space: nowrap;
         }
 
         .language-switcher a {
-            color: rgba(255,255,255,.82);
+            color: rgba(7,51,99,.78);
             text-decoration: none;
         }
 
         .language-switcher a:hover,
         .language-switcher a.is-active {
-            color: #ffffff;
+            color: #004aa5;
         }
 
         .language-switcher a.is-active {
@@ -243,11 +244,12 @@
             position: sticky;
             top: 0;
             z-index: 30;
-            background: #ffffff;
-            backdrop-filter: none;
-            border-top: 4px solid #004aa5;
-            border-bottom: 1px solid #cfe3f7;
-            box-shadow: 0 12px 26px rgba(0, 74, 165, .08);
+            background: linear-gradient(135deg, rgba(230,244,252,.98) 0%, rgba(184,218,240,.96) 46%, rgba(246,251,255,.98) 100%);
+            backdrop-filter: blur(12px) saturate(1.08);
+            -webkit-backdrop-filter: blur(12px) saturate(1.08);
+            border-top: 4px solid #7fb6dc;
+            border-bottom: 1px solid rgba(126,177,213,.5);
+            box-shadow: 0 12px 26px rgba(35, 96, 144, .12);
             overflow: hidden;
         }
 
@@ -259,7 +261,7 @@
             width: 360px;
             height: 170px;
             pointer-events: none;
-            background: radial-gradient(circle at 55% 35%, rgba(255,255,255,.98) 0 26%, rgba(255,255,255,.72) 27% 48%, rgba(255,255,255,0) 72%);
+            background: radial-gradient(circle at 55% 35%, rgba(255,255,255,.98) 0 26%, rgba(236,248,255,.78) 27% 48%, rgba(255,255,255,0) 72%);
             filter: blur(8px);
             z-index: 0;
         }
@@ -480,8 +482,10 @@
 
         .footer {
             margin-top: 48px;
-            background: linear-gradient(135deg, #003678 0%, #004aa5 48%, #0571bd 100%);
-            color: #eaf5ff;
+            background:
+                linear-gradient(135deg, rgba(8,74,138,.9) 0%, rgba(76,142,190,.86) 48%, rgba(211,236,249,.94) 100%),
+                linear-gradient(180deg, #c7e3f4 0%, #8bbde0 100%);
+            color: #f4fbff;
         }
 
         .footer-inner {
@@ -506,7 +510,7 @@
         }
 
         .footer-desc {
-            color: #d6eafe;
+            color: #eff8ff;
             line-height: 1.7;
             overflow-wrap: anywhere;
         }
@@ -528,7 +532,7 @@
         }
 
         .footer-links a {
-            color: #eaf5ff;
+            color: #f4fbff;
             text-decoration: none;
             overflow-wrap: anywhere;
         }
@@ -578,7 +582,7 @@
             justify-content: space-between;
             gap: 16px;
             flex-wrap: wrap;
-            color: #b9c7df;
+            color: #e7f4ff;
         }
 
         .footer-social {
@@ -588,7 +592,7 @@
         }
 
         .footer-social a {
-            color: #dfe7f7;
+            color: #f4fbff;
             text-decoration: none;
         }
 

@@ -6,14 +6,6 @@
     $brandTagline = $isBangla ? 'আপনার সুস্থতা আমাদের অঙ্গীকার' : 'Trusted healthcare for every family';
     $openingHours = $siteSettings?->{'opening_hours_'.$locale} ?? null;
     $address = $siteSettings?->{'address_'.$locale} ?? null;
-    $socialLinks = $siteSettings?->social_links ?? [];
-    $socialIcons = [
-        'facebook' => 'f',
-        'instagram' => '◎',
-        'whatsapp' => '◉',
-        'youtube' => '▶',
-    ];
-
     $localizedUrl = function (string $targetLocale): string {
         $path = request()->path();
         $localizedPath = preg_replace('~^(en|bn)(/|#|$)~', $targetLocale.'$2', $path);
@@ -52,12 +44,6 @@
             </div>
 
             <div class="topbar-meta">
-                @foreach ($socialLinks as $platform => $url)
-                    @if ($url)
-                        <a class="topbar-social" href="{{ $url }}" target="_blank" rel="noopener" aria-label="{{ ucfirst($platform) }}">{{ $socialIcons[$platform] ?? mb_substr($platform, 0, 1) }}</a>
-                    @endif
-                @endforeach
-
                 <span class="language-switcher" aria-label="{{ $isBangla ? 'ভাষা পরিবর্তন' : 'Change language' }}">
                     <a href="{{ $localizedUrl('bn') }}" data-locale-switch class="{{ $isBangla ? 'is-active' : '' }}">বাংলা</a>
                     <span aria-hidden="true">|</span>
