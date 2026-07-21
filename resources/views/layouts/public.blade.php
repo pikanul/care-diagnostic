@@ -520,6 +520,32 @@
             background: rgba(255,255,255,0.04);
         }
 
+        .newsletter-form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            max-width: 560px;
+        }
+
+        .newsletter-form input {
+            min-width: 0;
+            height: 44px;
+            padding: 0 12px;
+            border-radius: 7px;
+            border: 1px solid rgba(255,255,255,.28);
+            font-size: 14px;
+        }
+
+        .newsletter-form .action-link {
+            flex: 0 0 auto;
+            min-height: 44px;
+            padding: 0 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
         .footer-bottom {
             border-top: 1px solid rgba(255,255,255,0.12);
             padding: 14px 0 18px;

@@ -47,7 +47,7 @@
 
             @if ($siteSettings?->newsletter_visible)
                 <div class="newsletter">
-                    <form action="{{ $localizedLink('/en#appointment-cta') }}" method="get" style="display:flex;gap:8px;">
+                    <form class="newsletter-form" action="{{ $localizedLink('/en#appointment-cta') }}" method="get">
                         <input type="email" name="newsletter_email" placeholder="{{ $isBangla ? 'আপনার ইমেইল দিন' : 'Enter your email' }}" aria-label="{{ $isBangla ? 'নিউজলেটার ইমেইল' : 'Newsletter email' }}">
                         <button class="action-link primary" type="submit">{{ $isBangla ? 'পাঠান' : 'Send' }}</button>
                     </form>
