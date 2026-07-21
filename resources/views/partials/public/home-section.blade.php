@@ -374,13 +374,13 @@
                                 <p class="section-subtitle">{{ $subtitle }}</p>
                             @endif
                         </div>
-                        @if (! empty($cta['button_label_en']) && ! empty($cta['button_url']))
-                            <a class="action-link" href="{{ $localizedUrl($cta['button_url']) }}">
+                        @if (! empty($cta['button_label_en']))
+                            <button class="action-link" type="button" data-open-test-modal>
                                 {{ $isBn ? ($cta['button_label_bn'] ?? $cta['button_label_en']) : $cta['button_label_en'] }}
-                            </a>
+                            </button>
                         @endif
                     </div>
-                    <div class="test-category-grid">
+                    <div class="test-category-grid" data-test-category-carousel aria-label="{{ $title }}">
                         @foreach ($groups as $group)
                             @php
                                 $tests = $isBn ? ($group['tests_bn'] ?? $group['tests_en'] ?? []) : ($group['tests_en'] ?? $group['tests_bn'] ?? []);
@@ -388,12 +388,39 @@
                             <article class="test-category">
                                 <h3>{{ $isBn ? ($group['title_bn'] ?? $group['title_en'] ?? '') : ($group['title_en'] ?? $group['title_bn'] ?? '') }}</h3>
                                 <ul>
-                                    @foreach ($tests as $test)
+                                    @foreach (array_slice($tests, 0, 5) as $test)
                                         <li>{{ $test }}</li>
                                     @endforeach
                                 </ul>
                             </article>
                         @endforeach
+                    </div>
+                    <div class="test-modal" data-test-modal aria-hidden="true">
+                        <div class="test-modal-backdrop" data-close-test-modal></div>
+                        <div class="test-modal-card" role="dialog" aria-modal="true" aria-label="{{ $isBn ? 'সব পরীক্ষা' : 'All Tests' }}">
+                            <div class="test-modal-head">
+                                <div>
+                                    <div class="section-kicker">{{ $section->section_label_en }}</div>
+                                    <h3>{{ $isBn ? 'সব পরীক্ষা' : 'All Tests' }}</h3>
+                                </div>
+                                <button type="button" data-close-test-modal aria-label="{{ $isBn ? 'বন্ধ করুন' : 'Close' }}">×</button>
+                            </div>
+                            <div class="test-modal-body">
+                                @foreach ($groups as $group)
+                                    @php
+                                        $tests = $isBn ? ($group['tests_bn'] ?? $group['tests_en'] ?? []) : ($group['tests_en'] ?? $group['tests_bn'] ?? []);
+                                    @endphp
+                                    <article class="test-modal-category">
+                                        <h4>{{ $isBn ? ($group['title_bn'] ?? $group['title_en'] ?? '') : ($group['title_en'] ?? $group['title_bn'] ?? '') }}</h4>
+                                        <ul>
+                                            @foreach ($tests as $test)
+                                                <li>{{ $test }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </article>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                     @break
 
