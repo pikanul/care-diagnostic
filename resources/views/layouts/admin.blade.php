@@ -53,6 +53,36 @@
             gap: 6px;
         }
 
+        .nav-group {
+            display: grid;
+            gap: 4px;
+        }
+
+        .nav-group-label {
+            margin: 8px 10px 2px;
+            color: #9fb4d8;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        .nav-submenu {
+            display: grid;
+            gap: 3px;
+            margin-left: 10px;
+            padding-left: 10px;
+            border-left: 1px solid rgba(219,231,255,.2);
+        }
+
+        .nav .nav-submenu a {
+            padding: 8px 10px;
+            border-radius: 7px;
+            color: #c7d7f3;
+            font-size: 13px;
+            line-height: 1.25;
+        }
+
         .nav a,
         .logout-button {
             display: flex;
@@ -309,6 +339,24 @@
                 {{ config('app.name') }}<br>Admin
             </a>
 
+            @php
+                $homepageMenuSections = collect();
+                $homepageMenuLabels = [
+                    'main-services' => 'Our Services',
+                    'diagnostic-test-categories' => 'Accurate Tests, Reliable Results',
+                    'specialist-doctors' => 'Specialist Doctors',
+                    'why-choose-us' => 'Why Choose Us',
+                    'facility-showcase' => 'Facility Showcase',
+                ];
+
+                if (auth()->user()?->hasPermission(\App\Support\AdminPermissions::MANAGE_CONTENT)) {
+                    $homepageMenuSections = \App\Models\HomepageSection::query()
+                        ->whereIn('section_key', array_keys($homepageMenuLabels))
+                        ->get()
+                        ->keyBy('section_key');
+                }
+            @endphp
+
             <nav class="nav" aria-label="Admin navigation">
                 <a href="{{ route('admin.dashboard') }}" @class(['active' => request()->routeIs('admin.dashboard')])>Dashboard</a>
                 <a href="{{ route('admin.profile.edit') }}" @class(['active' => request()->routeIs('admin.profile.*')])>Profile</a>
@@ -327,7 +375,21 @@
                 @endif
 
                 @if (auth()->user()?->hasPermission(\App\Support\AdminPermissions::MANAGE_CONTENT))
-                    <a href="{{ route('admin.homepage.index') }}" @class(['active' => request()->routeIs('admin.homepage.*')])>Homepage Builder</a>
+                    <div class="nav-group">
+                        <a href="{{ route('admin.homepage.index') }}" @class(['active' => request()->routeIs('admin.homepage.index')])>Homepage Builder</a>
+                        <div class="nav-submenu" aria-label="Homepage section shortcuts">
+                            @foreach ($homepageMenuLabels as $sectionKey => $sectionLabel)
+                                @php
+                                    $homepageMenuSection = $homepageMenuSections->get($sectionKey);
+                                @endphp
+                                @if ($homepageMenuSection)
+                                    <a href="{{ route('admin.homepage.edit', $homepageMenuSection) }}" @class(['active' => request()->routeIs('admin.homepage.edit') && (int) request()->route('homepageSection')?->id === (int) $homepageMenuSection->id])>
+                                        {{ $sectionLabel }}
+                                    </a>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
                 @endif
 
                 @if (auth()->user()?->hasPermission(\App\Support\AdminPermissions::MANAGE_USERS))

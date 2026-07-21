@@ -3,10 +3,12 @@
 @section('content')
     @php
         $quickSections = [
-            'hero-slider' => 'Hero Image',
-            'specialist-doctors' => 'Specialist Doctors',
-            'diagnostic-test-categories' => 'Accurate Tests, Reliable Results',
             'main-services' => 'Our Services',
+            'diagnostic-test-categories' => 'Accurate Tests, Reliable Results',
+            'specialist-doctors' => 'Specialist Doctors',
+            'why-choose-us' => 'Why Choose Us',
+            'facility-showcase' => 'Facility Showcase',
+            'hero-slider' => 'Hero Image',
         ];
     @endphp
 
